@@ -3,16 +3,16 @@
 layout: home
 
 hero:
-  name: "Anywork Collab: Software Documentation"
-  text: "A VitePress Site"
-  tagline: My great project tagline
+  name: "Anywork Collab"
+  text: "Documentation"
+  tagline: With Great Collab Comes Great Success
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
+      text: On Boarding
+      link: /onboarding
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: Specifications
+      link: /specs
 
 features:
   - title: Feature A

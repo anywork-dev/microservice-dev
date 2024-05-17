@@ -6,8 +6,6 @@ router.post('/login', login);
 
 router.post('/register', register);
 
-router.get('/check', function (params) {
-  
-})
+router.get('/check', function (params) {})
 
 module.exports = router;
