@@ -1,28 +1,13 @@
-const express = require('express');
-const authService = require('../services/auth.service');
-
+import express from "express"
+import { login, register } from "../controllers/auth.controller";
 const router = express.Router();
 
-router.post('/login', async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    const token = await authService.login(email, password);
-    res.cookie('token', token, { httpOnly: true }).json({ message: 'Login successful' });
-  } catch (error) {
-    res.status(401).json({ error: error.message });
-  }
-});
+router.post('/login', login);
 
-router.post('/register', async (req, res, next) => {
-  try {
-    const { email, password } = req.body;
-    await authService.register(email, password);
-    res.json({ message: 'Registration successful' });
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-});
+router.post('/register', register);
 
-// Define other routes as needed
+router.get('/check', function (params) {
+  
+})
 
 module.exports = router;
