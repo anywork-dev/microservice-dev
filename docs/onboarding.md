@@ -18,6 +18,10 @@ The motivation behind Anywork Collab stems from the need to help business develo
 
 We adopt Design Driven Development (DDD) to ensure that every aspect of our project aligns with the overall vision and design principles. DDD helps us maintain a user-centric approach, ensuring that the final product meets the needs and expectations of its users.
 
+### System Architecture Overview
+
+Anywork Collab serves continuous development by using plugin based application where specific business logics are abstracted from the details of the system. Applying design pattern principles, we choose microservice approach to solve the complexity of various integration. This works by defining general interface on each program either it's frontend or backend. This effectively deploys innovation without interrupting business operational.
+
 ### Tech Stack
 
 Our project leverages a modern tech stack to ensure scalability, maintainability, and performance. Below is an overview of the technologies we use:
