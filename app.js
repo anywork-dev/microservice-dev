@@ -5,6 +5,8 @@ const sequelize = require('./database/connection');
 
 const app = express();
 
+authRouter
+
 app.use(bodyParser.json());
 
 // Use the auth router
