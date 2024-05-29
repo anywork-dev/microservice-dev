@@ -1,7 +1,3 @@
-Certainly! Here is a comprehensive onboarding documentation in Markdown (MD) format for your project:
-
----
-
 # Project Onboarding Documentation
 
 ## Introduction
