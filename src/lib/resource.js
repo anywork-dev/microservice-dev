@@ -1,7 +1,5 @@
-import config from "../app.config"
-
 // Utility functions
-const intersect = (a, b) => {
+export const intersect = (a, b) => {
   return a.filter((n) => b.indexOf(n) === -1);
 };
 
@@ -41,25 +39,21 @@ const handler = async (promise, onError) => {
 };
 
 // Base URL for the API
-const BASE_URL = `${config.PROTOCOL}://${config.BASE_URL}${config.PORT ? ':' + config.PORT : ""}`;
+// const BASE_URL = `${config.PROTOCOL}://${config.BASE_URL}${config.PORT ? ':' + config.PORT : ""}`;
 
 class RestResource {
   /**
    * @param {string} route The API route for the resource
    */
-  
-  constructor(route) {
-    this.route = route;
-    this._handler = (res) => handler(res, this._error);
-    this._error = errorHandler;
-    this._model = [];
-  }
+
+  static _handler = (res) => handler(res, this._error);
+  static _error = errorHandler;
 
   /**
    * Set a custom error handler
    * @param {function} callback Error handling function
    */
-  onError(callback) {
+  static onError(callback) {
     this._error = callback;
   }
 
@@ -67,7 +61,7 @@ class RestResource {
    * Set a custom response handler
    * @param {function} fun Response handling function
    */
-  handler(fun) {
+  static handler(fun) {
     this._handler = fun;
   }
 
@@ -75,8 +69,8 @@ class RestResource {
    * Define the model structure
    * @param {string[]|object} dataModel Model structure
    */
-  model(dataModel) {
-    this._model = Array.isArray(dataModel) ? dataModel : Object.keys(dataModel);
+  static model(dataModel) {
+    this.$model = Array.isArray(dataModel) ? dataModel : Object.keys(dataModel);
   }
 
   /**
@@ -84,12 +78,31 @@ class RestResource {
    * @param {string} [id] Resource ID
    * @returns {Promise<any>}
    */
-  get(id) {
+  static get(id) {
     return this._handler(
-      fetch(`${BASE_URL}/${this.route}${id ? `/${id}` : ""}`, {
+      fetch(`${this.$BASE_URL}/${this.$key}${id ? `/${id}` : ""}`, {
         method: "GET",
       })
     );
+  }
+
+  /**
+   * Find row by matching properties in `data`
+   * @param {string} [id] Resource ID
+   * @returns {Promise<any>}
+   */
+  static find(data) {
+      let query = new URLSearchParams();
+      for (const key of Object.keys(data)) {
+        query.append(key, data[key])
+      }
+
+      return this._handler(
+        fetch(`${this.$BASE_URL}/${this.$key}${query.size ? `?${query}` : ""}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" }
+        })
+      );
   }
 
   /**
@@ -97,9 +110,9 @@ class RestResource {
    * @param {string|number} id Resource ID
    * @returns {Promise<any>}
    */
-  delete(id) {
+  static delete(id) {
     return this._handler(
-      fetch(`${BASE_URL}/${this.route}/${id}`, {
+      fetch(`${this.$BASE_URL}/${this.$key}/${id}`, {
         method: "DELETE",
       })
     );
@@ -110,18 +123,18 @@ class RestResource {
    * @param {string} [id] Resource ID
    * @returns {object} Object containing the body method
    */
-  upsert(id) {
+  static upsert(id) {
     return {
       body: (data) => {
         let method = !id ? "POST" : "PUT";
 
         // Change partially
-        if (id && compareStruct(this._model, data).length > 0) {
+        if (id && compareStruct(this.$model, data).length > 0) {
           method = "PATCH";
         }
 
         return this._handler(
-          fetch(`${BASE_URL}/${this.route}${id ? `/${id}` : ""}`, {
+          fetch(`${this.$BASE_URL}/${this.$key}${id ? `/${id}` : ""}`, {
             method,
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data),
@@ -132,11 +145,4 @@ class RestResource {
   }
 }
 
-// Use configruation to direct resource manager
-function ResourceDirector(dataSource) {
-  return {
-    "rest-source": RestResource,
-  }[dataSource];
-}
-
-export default { Resource: ResourceDirector(config.DATA_SORUCE_TYPE) };
+export default RestResource;
