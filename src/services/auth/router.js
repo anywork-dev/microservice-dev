@@ -1,15 +1,54 @@
-export default  {
+import RouterAdapter from "../../lib/router-adapter";
+import { Response } from "net-tools"
+
+const routes = {
     $base: "/api/auth",
     login: {
+      middleware: [],
+      method: "POST",
+      subroute: {
+        basic: {
+            path: "/basic-login",
+            middleware: [],
+            method: "POST",
+            subroute: {},
+            handler(req, res) {
+                // Implement login logic here
+                return new Response({status: 401, ok: false, data});
+            },
+        },
+        google: {
+            path: "/login-with-google",
+            middleware: [],
+            method: "POST",
+            subroute: {},
+            handler(req, res) {
+                // Implement login logic here
+                return new Response({status: 401, ok: false, data});
+            },
+        }
+      },
       handler(req, res) {
         // Implement login logic here
-        res.send("Login successful");
+        return new Response({status: 401, ok: false, data});
       },
     },
     register: {
+      method: "POST",
+      subroute: {
+        basic: {
+            middleware: [],
+            method: "POST",
+            subroute: {},
+            handler(req, res) {
+                // Implement login logic here
+                return new Response({status: 401, ok: false, data});
+            },
+        }
+      },
       handler(req, res) {
         // Implement register logic here
-        res.send("Registration successful");
+        return new Response({status: 200, ok: true, data});
       },
     },
     recovery: {
@@ -23,12 +62,10 @@ export default  {
         // Implement session logic here
         res.send("Session valid");
       },
-    },
-    google: {
-      handler(req, res) {
-        // Implement Google login logic here
-        res.send("Google login successful");
-      },
-    },
+    }
   };
+
+export default class AuthRoutes extends RouterAdapter {
+    static routes = routes;
+}
   
