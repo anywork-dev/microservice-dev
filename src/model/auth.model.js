@@ -2,7 +2,7 @@ import Resource from 'resource'
 
 class UserResource extends Resource {
 
-    static $BASE_URL = `http://localhost:3000`;
+    static $BASE_URL = process.env.DATABASE_URL;
     static $key = "users";
     static $model = ["id", "name", "password"];
   

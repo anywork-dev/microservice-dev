@@ -19,14 +19,13 @@ function copyIfExists(source, target) {
     });
 }
 
-class FetchError extends Error {
+class FetchError {
     code = 0;
     reason = "Error unknown";
+    name = "Unknown"
     issue = "https://www.google.com/search?q=hello";
 
     constructor(error = {}) {
-        super(error.reason || "Error unknown");
-        this.name = "FetchError";
         copyIfExists(error, this);
     }
 }

@@ -1,16 +1,12 @@
-const reserved = "$base $authorization";
+// Each middleware and handler is a pure function
+
+const reserved = "$base $authorization $middleware";
 export default class RouterAdapter {
   routes = {};
 
   // Register all the routes recursively
   static register(router) {
-    for (const [key, value] of Object.entries(this.routes)) {
-      if (reserved.includes(key)) {
-        continue;
-      }
-
-      this.recursive(router, value, `${this.routes.$base}${value.path ?? `/${key}`}`);
-    }
+    this.recursive(router, this.routes, this.routes.path);
   }
 
   static routing(router, options){
