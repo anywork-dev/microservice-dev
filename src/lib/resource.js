@@ -1,5 +1,5 @@
 // Utility functions
-export const intersect = (a, b) => {
+const intersect = (a, b) => {
   return a.filter((n) => b.indexOf(n) === -1);
 };
 

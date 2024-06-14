@@ -1,3 +1,15 @@
+export class Response {
+    ok = true
+    status = 200
+    data = undefined
+    error = undefined
+    
+    constructor(target){
+        copyIfExists(target, this)
+        this.error = this.error && new FetchError(this.error);
+    }
+}
+
 // Utility function to copy properties from source to target if they exist in target
 function copyIfExists(source, target) {
     Object.keys(source).forEach(key => {
@@ -9,7 +21,6 @@ function copyIfExists(source, target) {
 
 class FetchError extends Error {
     code = 0;
-    HttpStatus = 0;
     reason = "Error unknown";
     issue = "https://www.google.com/search?q=hello";
 

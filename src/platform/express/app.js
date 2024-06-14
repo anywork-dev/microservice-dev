@@ -1,16 +1,13 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const authRouter = require('./routers/auth.router');
-const sequelize = require('./database/connection');
+const routes = require("./router")
 
 const app = express();
-
-authRouter
 
 app.use(bodyParser.json());
 
 // Use the auth router
-app.use('/auth', authRouter);
+app.use('/api', routes);
 
 const PORT = process.env.PORT || 3000;
 

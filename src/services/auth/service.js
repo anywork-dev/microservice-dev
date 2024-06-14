@@ -1,8 +1,7 @@
 import crypton from "cryptonite"
 import UserResource from "auth-model"
 import EmailClient from "email-client"
-import Response from "response"
-import Request from "request"
+import { Response } from "net-tools";
 
 // Event Driven Architecture for direct service calls.
 // These method applies when the service discovered in the same service
@@ -12,6 +11,8 @@ const CLIENT_SECRET = 'your-google-client-secret';
 const REDIRECT_URI = 'http://yourdomain.com/auth/google/callback';
 const TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
 const USERINFO_ENDPOINT = 'https://www.googleapis.com/oauth2/v2/userinfo';
+
+
 
 class AuthService {
     static async googleCallback() {
@@ -35,7 +36,7 @@ class AuthService {
             const token = crypton.token({ userId: user.id });
             return new Response({ ok: true, status: 200, data: { token } });
         } else {
-            return new Response({ ok: false, status: 401, error: "Invalid credentials" });
+            return new Response({ ok: false, status: 401, error: {reason: "Invalid credentials" } });
         }
     }
 
@@ -46,7 +47,7 @@ class AuthService {
         if (verified) {
             return new Response({ ok: true, status: 200, data: { userId: verified.userId } });
         } else {
-            return new Response({ ok: false, status: 401, error: "Invalid or expired session" });
+            return new Response({ ok: false, status: 401, reason: "Invalid or expired session", error: "Unauthorized" });
         }
     }
 
@@ -62,7 +63,7 @@ class AuthService {
 
     static async basicRegistration(req) {
         const { email, password } = req.body;
-        const hashedPassword = await crypton.encrypt(password);
+        const hashedPassword = await crypton.hashPassword(password);
         const user = await UserResource.upsert({ email, password: hashedPassword });
 
         return new Response({ ok: true, status: 200, data: { user } });

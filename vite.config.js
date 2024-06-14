@@ -8,8 +8,8 @@ export default defineConfig({
       'cryptonite': resolve(__dirname, 'src/lib/cryptonite.js'),
       'auth-model': resolve(__dirname, 'src/model/auth.model.js'),
       'email-client': resolve(__dirname, 'src/lib/email-client.js'),
-      'response': resolve(__dirname, 'src/lib/email-client.js'),
-      'request': resolve(__dirname, 'src/lib/email-client.js'),
+      'net-tools': resolve(__dirname, 'src/lib/fetcher.js'),
+      'auth-service': resolve(__dirname, 'src/services/auth/service.js'),
     },
   },
   test: {
