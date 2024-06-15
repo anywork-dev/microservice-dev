@@ -4,6 +4,7 @@ await esbuild.build({
   entryPoints: ['./src/platform/express/app.js'],
   bundle: true,
   outdir: "build/express/src",
+  platform: 'node',
   format: "esm",
   alias: {
     'net-tools': './src/lib/net-tools.js',
