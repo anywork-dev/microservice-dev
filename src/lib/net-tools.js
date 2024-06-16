@@ -1,6 +1,8 @@
 export class Response {
     ok = true
     status = 200
+    headers = {}
+    body = undefined
     data = undefined
     error = undefined
     

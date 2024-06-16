@@ -17,9 +17,25 @@ function wrapHandler(handler) {
     return async (req, res, next) => {
         try {
             const result = await handler(req, res);
-            const {data, status, error} = result;
+            const {data, status, error, body, headers} = result;
             if (result instanceof Response) {
-                res.status(status).json(data ? { data } : { error });
+                let response = status ? res.status(status) : res;
+                headers = Object.entries(headers || {});
+                
+                if (headers.length > 0) {
+                    for (const [key, value] of headers) {
+                        response.set(key, value)
+                    }
+                }
+
+                if (body) {
+                    response.send(body)
+                    return;
+                }
+
+                if (data || error) {
+                    response.json(data ? { data } : { error });
+                }
             }
         } catch (err) {
             next(err);

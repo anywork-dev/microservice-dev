@@ -8,29 +8,26 @@ const subroute = {
     method: "POST",
     subroute: {
       basic: {
-        path: "/basic-login",
         middleware: [],
         method: "POST",
         subroute: {},
         handler(req, res) {
           // Implement login logic here
-          return new Response({ status: 404, ok: false, error: {reason: "Unimplemented logic"} });
+          return new Response({ status: 404, ok: false, error: {reason: "Unimplemented logic for login"} });
         },
       },
       google: {
-        path: "/login-with-google",
-        middleware: [],
-        method: "POST",
-        subroute: {},
-        handler(req, res) {
-          // Implement login logic here
-          return new Response({ status: 404, ok: false, data });
-        },
+        subroute: {
+          callback: {
+            method: "GET",
+            subroute: {},
+            handler(req, res) {
+              // Implement login logic here
+              return new AuthService.googleCallback(req, res);
+            },
+          }
+        }
       },
-    },
-    handler(req, res) {
-      // Implement login logic here
-      return new Response({ status: 404, ok: false, error: { reason: "Unimplemented logic" } });
     },
   },
   register: {
@@ -67,7 +64,6 @@ const subroute = {
 
 const routes = {
   path: "/api/auth",
-  middleware: [(req) => console.log("Accessing: ", req?.path)],
   subroute
 };
 

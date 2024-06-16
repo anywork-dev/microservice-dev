@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "dev:database": "npx json-server -p 8000 tests/.data.json",
-    "build:express": "node src/platform/express/build.js && docker build build/express/ && docker-compose --project-directory build/express/ up -d",
+    "build:express": "node src/platform/express/build.js && docker compose --project-directory build/express/ build && docker compose --project-directory build/express/ up -d",
+    "start:express": "node src/platform/express/build.js && docker compose --project-directory build/express/ up -d",
     "build:cloudflare": "node src/platform/cloudflare/build.js && docker build build/cloudflare/Dockerfile && docker-compose --project-directory build/cloudflare/ up -d"
   },
   "keywords": [],
