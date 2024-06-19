@@ -1,7 +1,25 @@
 import crypton from "cryptonite";
 import UserResource from "auth-model";
 import EmailClient from "email-client";
+import { randomString } from "helper";
 import { Response } from "net-tools";
+
+class Registration {
+  static attempts = new Map()
+  static insert(id, data){
+    this.attempts.set(id, data);
+  }
+
+  static confirm(id){
+    if (!this.attempts.has(id)) {
+      return
+    }
+    
+    const data = this.attempts.get(id)
+    this.attempts.delete(id)
+    return data;
+  }
+}
 
 // Event Driven Architecture for direct service calls.
 // These method applies when the service discovered in the same service
@@ -82,8 +100,7 @@ class AuthService {
       // Redirect to the appropriate page
       return new Response({
         status: 302,
-        headers: { Location: "https://google.com" },
-        cookie: { user },
+        headers: { Location: "https://google.com" }
       }); // Change this to your desired redirect URL
     } catch (error) {
       console.error("Error during Google OAuth callback:", error);
@@ -95,16 +112,15 @@ class AuthService {
   }
 
   static async login(data) {
-    const { username, password } = data;
-    const [user] = await UserResource.find({ username });
+    const { email, password } = data;
+    const [user] = await UserResource.findAll({ email });
 
     if (user && (await crypton.compare(password, user.password))) {
       const token = crypton.token({ userId: user.id });
       return new Response({
         ok: true,
         status: 200,
-        data: { token },
-        session: { user },
+        data: { token, user }
       });
     } else {
       return new Response({
@@ -216,12 +232,24 @@ class AuthService {
       contact,
       address,
       name,
-      password: hashedPassword,
-      confirmed: false
+      password: hashedPassword
     };
 
+    const id = randomString(25);
+    Registration.insert(id, user)
+
+    // Return successful response
+    return new Response({ ok: true, status: 200, data: { message: "Waiting for confirmation" } });
+  }
+
+  static async confirmBasicRegistration(req){
+
+    const { confirm_id } = req.query;
+    
+    const data = Registration.confirm(confirm_id)
+
     // Save the user to the database
-    // const savedUser = await UserResource.insert(user);
+    const savedUser = data && await UserResource.insert(data);
 
     if (!savedUser) {
       return new Response({
@@ -230,9 +258,7 @@ class AuthService {
         error: "Registration failed. Please try again.",
       });
     }
-
-    // Return successful response
-    return new Response({ ok: true, status: 200, data: { user: savedUser } });
+    return new Response({ ok: true, status: 200, data: { ...savedUser } })
   }
 
   static async basicRecovery(req) {

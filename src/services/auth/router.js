@@ -19,7 +19,17 @@ const subroute = {
         method: "POST",
         handler(req, res) {
           // Login Service
-          return AuthService.login(req?.body ?? {});
+          const result = AuthService.login(req?.body ?? {});
+          const { ok } = result;
+
+          if (ok) {
+            // Insert user session
+            result.session.user = result.data.user;
+            // Hide user data from service response
+            result.data.user = undefined;
+          }
+
+          return result;
         },
       },
     },
