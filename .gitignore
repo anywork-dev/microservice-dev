@@ -3,4 +3,5 @@ node_modules
 *.drawio*
 build/*/src/*
 *secret*
+
 docker-compose.yml
