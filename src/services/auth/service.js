@@ -80,7 +80,7 @@ class AuthService {
       return new Response({status: 302, headers: { Location: "https://google.com" }, cookie: { user }}); // Change this to your desired redirect URL
     } catch (error) {
       console.error("Error during Google OAuth callback:", error);
-      return new Response({status: 500, error: {reason: "Internal Server Error"}})
+      return new Response({status: 500, error: {name: "GoogleAuth",reason: "Internal Server Error"}})
     }
   }
 

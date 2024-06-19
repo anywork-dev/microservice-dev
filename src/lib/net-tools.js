@@ -29,7 +29,11 @@ class FetchError {
     issue = "https://www.google.com/search?q=hello";
 
     constructor(error = {}) {
-        copyIfExists(error, this);
+        if (typeof error === "object") {
+            copyIfExists(error, this);
+        } else {
+            this.reason = error
+        }
     }
 }
 

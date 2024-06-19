@@ -10,10 +10,9 @@ const subroute = {
       basic: {
         middleware: [],
         method: "POST",
-        subroute: {},
         handler(req, res) {
-          // Implement login logic here
-          return new Response({ status: 301, headers: { Location: "https://google.com" }, error: {reason: "Unimplemented logic for login"} });
+          // Login Service
+          return AuthService.login(req?.body ?? {});
         },
       },
     },
@@ -22,9 +21,8 @@ const subroute = {
     subroute: {
       callback: {
         method: "GET",
-        subroute: {},
         handler(req, res) {
-          // Implement login logic here
+          
           return AuthService.googleCallback(req, res);
         },
       }
@@ -55,9 +53,9 @@ const subroute = {
     },
   },
   session: {
+    method: "GET",
     handler(req, res) {
-      // Implement session logic here
-      res.send("Session valid");
+      return AuthService.session(req)
     },
   },
 };

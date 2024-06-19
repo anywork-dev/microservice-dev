@@ -26,7 +26,7 @@ function wrapHandler(handler) {
 
                 if (cookie.length > 0) {
                     for (const [key, value] of cookie) {
-                        res.cookie(key, value, { maxAge: 1000 * 60 * 60 * 24 * 7, httpOnly: true });
+                        res.cookies[key] = value
                     }
                 }
                 

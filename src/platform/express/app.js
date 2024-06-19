@@ -8,7 +8,7 @@ const app = express();
 app.use(bodyParser.json());
 
 // Middleware to parse cookies
-app.use(cookieParser());
+app.use(cookieParser("MSUXR78uWR", { maxAge: 1000 * 60 * 60 * 24 * 7, httpOnly: true }));
 
 app.use(routes);
 
