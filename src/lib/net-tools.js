@@ -2,6 +2,7 @@ export class Response {
     ok = true
     status = 200
     headers = {}
+    cookie = {}
     body = undefined
     data = undefined
     error = undefined

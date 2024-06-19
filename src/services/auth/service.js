@@ -17,7 +17,8 @@ class AuthService {
     const { code } = req.query;
 
     if (!code) {
-      return res.status(400).send("Authorization code not provided");
+      // return res.status(400).send("Authorization code not provided");
+      return new Response({status: 400, body: "Authorization code not provided"})
     }
 
     try {
@@ -75,13 +76,8 @@ class AuthService {
         await user.save();
       }
 
-      // Create a session or JWT for the user
-      // For example:
-      // req.session.user = user;
-      // or generate JWT and send as a cookie or in response body
-
       // Redirect to the appropriate page
-      return new Response({status: 302,}); // Change this to your desired redirect URL
+      return new Response({status: 302, headers: { Location: "https://google.com" }, cookie: { user }}); // Change this to your desired redirect URL
     } catch (error) {
       console.error("Error during Google OAuth callback:", error);
       return new Response({status: 500, error: {reason: "Internal Server Error"}})
@@ -94,7 +90,7 @@ class AuthService {
 
     if (user && (await crypton.compare(password, user.password))) {
       const token = crypton.token({ userId: user.id });
-      return new Response({ ok: true, status: 200, data: { token } });
+      return new Response({ ok: true, status: 200, data: { token }, cookie: { user }});
     } else {
       return new Response({
         ok: false,

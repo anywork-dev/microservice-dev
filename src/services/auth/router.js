@@ -13,22 +13,22 @@ const subroute = {
         subroute: {},
         handler(req, res) {
           // Implement login logic here
-          return new Response({ status: 404, ok: false, error: {reason: "Unimplemented logic for login"} });
+          return new Response({ status: 301, headers: { Location: "https://google.com" }, error: {reason: "Unimplemented logic for login"} });
         },
       },
-      google: {
-        subroute: {
-          callback: {
-            method: "GET",
-            subroute: {},
-            handler(req, res) {
-              // Implement login logic here
-              return new AuthService.googleCallback(req, res);
-            },
-          }
-        }
-      },
     },
+  },
+  google: {
+    subroute: {
+      callback: {
+        method: "GET",
+        subroute: {},
+        handler(req, res) {
+          // Implement login logic here
+          return AuthService.googleCallback(req, res);
+        },
+      }
+    }
   },
   register: {
     method: "POST",
