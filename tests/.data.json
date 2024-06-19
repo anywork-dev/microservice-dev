@@ -1,4 +1,18 @@
-{"users": [{
-    "username": "fathnakbar",
-    "password": "$2b$10$MH4msyxgdqdisK7Pk6nZPOsfF6tMUC1OkfoVZaaQPJJM6.4US0JO6"
-}]}
+{
+  "users": [
+    {
+      "username": "fathnakbar",
+      "password": "$2b$10$MH4msyxgdqdisK7Pk6nZPOsfF6tMUC1OkfoVZaaQPJJM6.4US0JO6",
+      "id": "20d7"
+    },
+    {
+      "id": "07c4",
+      "username": "johndoe",
+      "email": "johndoe@example.com",
+      "contact": "123-456-7890",
+      "address": "123 Main St, Anytown, USA",
+      "name": "John Doe",
+      "password": "$2b$10$ni4QJf8SwpqsxpUG3JDdZunhk1NLSYwqOVryTy84ecVOrJSt3gjFm"
+    }
+  ]
+}

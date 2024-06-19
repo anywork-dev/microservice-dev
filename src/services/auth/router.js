@@ -3,6 +3,13 @@ import { Response } from "net-tools";
 import AuthService from "./service";
 
 const subroute = {
+  logout: {
+    method: "POST",
+    handler(req, res) {
+      // Login Service
+      return AuthService.login(req?.body ?? {});
+    },
+  },
   login: {
     middleware: [],
     method: "POST",
@@ -36,8 +43,7 @@ const subroute = {
         method: "POST",
         subroute: {},
         handler(req, res) {
-          // Implement login logic here
-          return new Response({ status: 401, ok: false, data });
+          return AuthService.basicRegistration(req)
         },
       },
     },

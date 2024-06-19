@@ -17,5 +17,5 @@ await esbuild.build({
     'platform-router-adapter': './src/platform/express/lib/router-adapter.js',
     'router-adapter': './src/lib/router-adapter.js'
   },
-  external: ["bcrypt", "jsonwebtoken", "express", "body-parser", "cookie-parser"]
+  external: ["bcrypt", "jsonwebtoken", "express", "body-parser", "cookie-parser", "cookie-session"]
 })

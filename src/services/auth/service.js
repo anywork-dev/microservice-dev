@@ -18,7 +18,10 @@ class AuthService {
 
     if (!code) {
       // return res.status(400).send("Authorization code not provided");
-      return new Response({status: 400, body: "Authorization code not provided"})
+      return new Response({
+        status: 400,
+        body: "Authorization code not provided",
+      });
     }
 
     try {
@@ -77,10 +80,17 @@ class AuthService {
       }
 
       // Redirect to the appropriate page
-      return new Response({status: 302, headers: { Location: "https://google.com" }, cookie: { user }}); // Change this to your desired redirect URL
+      return new Response({
+        status: 302,
+        headers: { Location: "https://google.com" },
+        cookie: { user },
+      }); // Change this to your desired redirect URL
     } catch (error) {
       console.error("Error during Google OAuth callback:", error);
-      return new Response({status: 500, error: {name: "GoogleAuth",reason: "Internal Server Error"}})
+      return new Response({
+        status: 500,
+        error: { name: "GoogleAuth", reason: "Internal Server Error" },
+      });
     }
   }
 
@@ -90,7 +100,12 @@ class AuthService {
 
     if (user && (await crypton.compare(password, user.password))) {
       const token = crypton.token({ userId: user.id });
-      return new Response({ ok: true, status: 200, data: { token }, cookie: { user }});
+      return new Response({
+        ok: true,
+        status: 200,
+        data: { token },
+        session: { user },
+      });
     } else {
       return new Response({
         ok: false,
@@ -130,12 +145,94 @@ class AuthService {
     return new Response({ ok: true, status: 200, data: { user } });
   }
 
+  /**
+   * @param {object} req - The Express request object.
+   * @param {object} req.body - The body of the request.
+   * @param {string} req.body.username - The username of the new user.
+   * @param {string} req.body.email - The email of the new user.
+   * @param {string} req.body.contact - The contact information of the new user.
+   * @param {string} req.body.address - The address of the new user.
+   * @param {string} req.body.name - The name of the new user.
+   * @param {string} req.body.password - The password of the new user.
+   * @returns {Promise<Response>} - A promise that resolves to an HTTP response object.
+   *
+   * @throws {Error} - Throws an error if there is an issue with database access or password hashing.
+   */
   static async basicRegistration(req) {
-    const { email, password } = req.body;
-    const hashedPassword = await crypton.hashPassword(password);
-    const user = await UserResource.upsert({ email, password: hashedPassword });
+    const { email, contact, address, name, password } = req.body;
 
-    return new Response({ ok: true, status: 200, data: { user } });
+    // Helper functions
+    const validateEmail = (email) => {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(String(email).toLowerCase());
+    };
+
+    const userExists = async (email) => {
+      // Replace with actual database check logic
+      // Separate username and email search
+      const { data } = (await UserResource.findAll({email})) || {};
+      return data?.length > 0;
+    };
+
+    // Validation logic
+    if (!email || !contact || !address || !name || !password) {
+      return new Response({
+        ok: false,
+        status: 400,
+        error: "All fields are required."
+      });
+    }
+
+    if (!validateEmail(email)) {
+      return new Response({
+        ok: false,
+        status: 400,
+        error: "Invalid email format."
+      });
+    }
+
+    if (password.length < 8) {
+      return new Response({
+        ok: false,
+        status: 400,
+        error: "Password must be at least 8 characters long."
+      });
+    }
+
+    if (await userExists(email)) {
+      return new Response({
+        ok: false,
+        status: 400,
+        error: "Email already exists."
+      });
+    }
+
+    // Hash the password
+    const hashedPassword = await crypton.hashPassword(password);
+
+    // Create the user object
+    const user = {
+      email,
+      contact,
+      address,
+      name,
+      password: hashedPassword,
+      confirmed: false
+    };
+
+    // Save the user to the database
+    // const savedUser = await UserResource.insert(user);
+
+    if (!savedUser) {
+      return new Response({
+        ok: false,
+        status: 500,
+        error: "Registration failed. Please try again.",
+      });
+    }
+
+    // Return successful response
+    return new Response({ ok: true, status: 200, data: { user: savedUser } });
   }
 
   static async basicRecovery(req) {

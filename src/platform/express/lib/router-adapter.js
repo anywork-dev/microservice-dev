@@ -17,16 +17,23 @@ function wrapHandler(handler) {
     return async (req, res, next) => {
         try {
             const result = await handler(req, res);
-            let {data, status, cookie, error, body, headers} = result;
+            let {data, status, session, error, cookie, body, headers} = result;
 
             if (result instanceof Response) {
                 let response = status ? res.status(status) : res;
                 headers = Object.entries(headers || {});
+                session = Object.entries(session || {});
                 cookie = Object.entries(cookie || {});
+
+                if (session.length > 0) {
+                    for (const [key, value] of session) {
+                        req.session[key] = value
+                    }
+                }
 
                 if (cookie.length > 0) {
                     for (const [key, value] of cookie) {
-                        res.cookies[key] = value
+                        res.cookie(key, value)
                     }
                 }
                 

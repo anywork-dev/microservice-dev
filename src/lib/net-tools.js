@@ -3,6 +3,7 @@ export class Response {
     status = 200
     headers = {}
     cookie = {}
+    session = {}
     body = undefined
     data = undefined
     error = undefined
