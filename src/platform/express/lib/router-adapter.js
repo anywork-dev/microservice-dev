@@ -68,7 +68,7 @@ export default class ExpressAdapter extends RouterAdapter {
     static routing(router, { method, path, middleware = [], handler }) {
 
         wrapMiddleware(middleware).map(item => {
-            router.use(item)
+            router.use(path, item)
         })
         
         if (typeof method === "string" && handler != undefined) {
