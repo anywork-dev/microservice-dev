@@ -45,7 +45,7 @@ class UserResource extends Resource {
     }
 
     static insert(){
-      return super.upsert(...arguments)
+      return super.insert(...arguments)
     }
 
     static find(){

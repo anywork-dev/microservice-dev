@@ -16,17 +16,8 @@ const subroute = {
       basic: {
         middleware: [],
         method: "POST",
-        handler(req, res) {
-          // Login Service
-          const result = AuthService.login(req?.body ?? {});
-          const { ok } = result;
-
-          if (ok) {
-            // Insert user session
-            result.session.user = result.data.user;
-            // Hide user data from service response
-            result.data.user = undefined;
-          }
+        async handler(req, res) {
+          const result = await AuthService.login(req?.body ?? {});
 
           return result;
         },
@@ -46,6 +37,12 @@ const subroute = {
           return AuthService.googleCallback(req, res);
         },
       }
+    }
+  },
+  confirm: {
+    method: "GET",
+    handler(req){
+      return AuthService.confirmBasicRegistration(req);
     }
   },
   register: {

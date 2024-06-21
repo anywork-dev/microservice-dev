@@ -16,8 +16,11 @@ class Registration {
     }
     
     const data = this.attempts.get(id)
-    this.attempts.delete(id)
     return data;
+  }
+  
+  static dispose(id){
+    this.attempts.delete(id)
   }
 }
 
@@ -127,14 +130,17 @@ class AuthService {
 
   static async login(data) {
     const { email, password } = data;
-    const [user] = await UserResource.findAll({ email });
+    const result = await UserResource.findAll({ email });
+    
+    const [user] = result.data ?? [{}]
 
-    if (user && (await crypton.compare(password, user.password))) {
+    if (user.password && (await crypton.compare(password, user.password))) {
       const token = crypton.token({ userId: user.id });
       return new Response({
         ok: true,
         status: 200,
-        data: { token, user }
+        data: { token },
+        session: { user }
       });
     } else {
       return new Response({
@@ -189,6 +195,7 @@ class AuthService {
    * @throws {Error} - Throws an error if there is an issue with database access or password hashing.
    */
   static async basicRegistration(req) {
+    // Security Consideration: Need to be guarded from DDOS attacks
     const { email, contact, address, name, password } = req.body;
 
     // Helper functions
@@ -229,11 +236,19 @@ class AuthService {
       });
     }
 
-    if (await userExists(email)) {
+    try {
+      if (await userExists(email)) {
+        return new Response({
+          ok: false,
+          status: 400,
+          error: "Email already exists."
+        });
+      }
+    } catch (error) {
       return new Response({
         ok: false,
-        status: 400,
-        error: "Email already exists."
+        status: 500,
+        error: "Internal error"
       });
     }
 
@@ -252,6 +267,9 @@ class AuthService {
     const id = randomString(25);
     Registration.insert(id, user)
 
+    // Implement email confirmation
+    console.log(id)
+
     // Return successful response
     return new Response({ ok: true, status: 200, data: { message: "Waiting for confirmation" } });
   }
@@ -259,6 +277,14 @@ class AuthService {
   static async confirmBasicRegistration(req){
 
     const { confirm_id } = req.query;
+
+    if (!confirm_id) {
+      return new Response({
+        ok: false,
+        status: 500,
+        error: "Confirm ID is not found!",
+      });
+    }
     
     const data = Registration.confirm(confirm_id)
 
@@ -272,6 +298,9 @@ class AuthService {
         error: "Registration failed. Please try again.",
       });
     }
+
+    Registration.dispose(confirm_id);
+
     return new Response({ ok: true, status: 200, data: { ...savedUser } })
   }
 
