@@ -31,6 +31,20 @@ const TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token";
 const USERINFO_ENDPOINT = "https://www.googleapis.com/oauth2/v2/userinfo";
 
 class AuthService {
+
+  static async signInGoogle(){
+    let Location = `https://accounts.google.com/o/oauth2/v2/auth?` +
+      `client_id=${CLIENT_ID}&` +
+      `redirect_uri=${REDIRECT_URI}&` +
+      `response_type=code&` +
+      `scope=https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email&` +
+      `access_type=offline`;
+
+      Location = "https://google.com/"
+
+    return new Response({status: 302, headers: { Location }})
+  }
+
   static async googleCallback(req, res) {
     const { code } = req.query;
 

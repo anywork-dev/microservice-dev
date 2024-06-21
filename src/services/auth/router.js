@@ -6,8 +6,7 @@ const subroute = {
   logout: {
     method: "POST",
     handler(req, res) {
-      // Login Service
-      return AuthService.login(req?.body ?? {});
+      // Remove session on server
     },
   },
   login: {
@@ -35,6 +34,10 @@ const subroute = {
     },
   },
   google: {
+    method: "GET",
+    handler(){
+      return AuthService.signInGoogle();
+    },
     subroute: {
       callback: {
         method: "GET",
@@ -46,7 +49,6 @@ const subroute = {
     }
   },
   register: {
-    method: "POST",
     subroute: {
       basic: {
         middleware: [],

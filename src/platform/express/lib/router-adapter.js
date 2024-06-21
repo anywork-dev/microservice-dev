@@ -50,7 +50,11 @@ function wrapHandler(handler) {
 
                 if (data || error) {
                     response.json(data ? { data } : { error });
+                    return;
                 }
+
+                response.end();
+                return
             }
         } catch (err) {
             next(err);
