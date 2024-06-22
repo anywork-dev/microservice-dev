@@ -1,3 +1,7 @@
 node_modules
 .hidden*
 *.drawio*
+build/*/src/*
+*secret*
+
+docker-compose.yml

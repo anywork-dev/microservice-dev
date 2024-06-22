@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken"
 import bcrypt from "bcrypt"
 
-const SECRET = "your_random_secret_key"; // Replace with your actual secret key
+const SESSION_SECRET = process.env.SESSION_SECRET; // Replace with your actual secret key
 const MAX_DATE = 1000 * 60 * 60 * 24 * 7; // Seven days max date
 const SALT_ROUNDS = 10;
 
@@ -10,7 +10,7 @@ class Cryptonite {
     // Decrypt the token and compare the session date with the current date by MAX_DATE
     static verify(token) {
         try {
-            const decoded = jwt.verify(token, SECRET);
+            const decoded = jwt.verify(token, SESSION_SECRET);
             const { userId, date } = decoded;
 
             // Check if the session date is within the MAX_DATE limit
@@ -27,7 +27,7 @@ class Cryptonite {
     // Generate encrypted token session based on the format
     static token(payload) {
         const date = Date.now();
-        const token = jwt.sign({ ...payload, date }, SECRET, { expiresIn: MAX_DATE / 1000 });
+        const token = jwt.sign({ ...payload, date }, SESSION_SECRET, { expiresIn: MAX_DATE / 1000 });
         return token;
     }
 

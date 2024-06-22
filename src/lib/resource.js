@@ -1,5 +1,5 @@
 // Utility functions
-export const intersect = (a, b) => {
+const intersect = (a, b) => {
   return a.filter((n) => b.indexOf(n) === -1);
 };
 
@@ -91,11 +91,26 @@ class RestResource {
    * @param {string} [id] Resource ID
    * @returns {Promise<any>}
    */
-  static find(data) {
-      let query = new URLSearchParams();
+  static find(id) {
+      return this._handler(
+        fetch(`${this.$BASE_URL}/${this.$key}/${id}`, {
+          method: "GET",
+          headers: { "Content-Type": "application/json" }
+        })
+      );
+  }
+
+  static findAll(data={}) {
+    // _page=1&_per_page=25
+
+    let query = new URLSearchParams();
       for (const key of Object.keys(data)) {
         query.append(key, data[key])
       }
+
+      // json-server spec
+      query.append("_page", data.page ?? 1)
+      query.append("_per_page", data.size ?? 10)
 
       return this._handler(
         fetch(`${this.$BASE_URL}/${this.$key}${query.size ? `?${query}` : ""}`, {
@@ -124,6 +139,47 @@ class RestResource {
    * @returns {object} Object containing the body method
    */
   static upsert(id) {
+    return {
+      body: (data) => {
+        let method = !id ? "POST" : "PUT";
+
+        // Change partially
+        if (id && compareStruct(this.$model, data).length > 0) {
+          method = "PATCH";
+        }
+
+        return this._handler(
+          fetch(`${this.$BASE_URL}/${this.$key}${id ? `/${id}` : ""}`, {
+            method,
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          })
+        );
+      },
+    };
+  }
+
+  /**
+   * Create or update resource
+   * @param {string} [id] Resource ID
+   * @returns {object} Object containing the body method
+   */
+  static insert(data) {
+    return this._handler(
+      fetch(`${this.$BASE_URL}/${this.$key}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
+    );
+  }
+
+  /**
+   * Create or update resource
+   * @param {string} [id] Resource ID
+   * @returns {object} Object containing the body method
+   */
+  static update(id) {
     return {
       body: (data) => {
         let method = !id ? "POST" : "PUT";
