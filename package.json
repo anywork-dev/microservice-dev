@@ -5,10 +5,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "vitest",
-    "docs:dev": "vitepress dev docs",
-    "docs:build": "vitepress build docs",
-    "docs:preview": "vitepress preview docs"
+    "dev:database": "npx json-server -p 8000 tests/.data.json",
+    "build:express": "node src/platform/express/build.js && docker compose --project-directory build/express/ build && docker compose --project-directory build/express/ up -d",
+    "start:express": "node src/platform/express/build.js && docker compose --project-directory build/express/ up -d",
+    "build:cloudflare": "node src/platform/cloudflare/build.js && docker build build/cloudflare/Dockerfile && docker-compose --project-directory build/cloudflare/ up -d"
   },
   "keywords": [],
   "author": "",

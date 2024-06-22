@@ -1,4 +1,4 @@
 import { Fetcher } from "./fetcher";
 import { RestResource } from "./resource";
 
-export { Fetcher, RestResource }
+export { Fetcher, RestResource, generateRandomString }

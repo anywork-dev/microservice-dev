@@ -1,4 +1,20 @@
-{"users": [{
-    "username": "fathnakbar",
-    "password": "$2b$10$MH4msyxgdqdisK7Pk6nZPOsfF6tMUC1OkfoVZaaQPJJM6.4US0JO6"
-}]}
+{
+  "users": [
+    {
+      "id": "22e5",
+      "email": "fathnakbar@gmail.com",
+      "name": "Fathan Akbar",
+      "picture": "https://lh3.googleusercontent.com/a/ACg8ocIi_2XyiEVnaiFF6VROgXsFezQGhEyv97-mi7DoTG73TyaASuqmDw=s96-c",
+      "type": 1
+    },
+    {
+      "id": "9672",
+      "email": "fathnsakbar@gmail.com",
+      "contact": "123-456-7890",
+      "address": "123 Main St, Anytown, USA",
+      "name": "John Doe",
+      "type": 0,
+      "password": "$2b$10$zFesbDqyWrOtdk6whV.bseQDdXrQ4TtoDiyW2o5PMTuN6.f6OxRji"
+    }
+  ]
+}
