@@ -3,6 +3,7 @@ import UserResource from "auth-model";
 import EmailClient from "email-client";
 import { randomString } from "helper";
 import { Response } from "net-tools";
+import EmailService from "../email/service";
 
 const AUTH_TYPE = {
   BASIC: 0,
@@ -28,17 +29,27 @@ class Registration {
   }
 }
 
+class Recovery {
+  static attempts = new Map()
+}
+
+class Invitation {
+  static attempts = new Map()
+}
+
 const userExists = async (email) => {
   const { data } = (await UserResource.findAll({ email })) || {};
   return data?.length > 0;
 };
+
+
 
 // Event Driven Architecture for direct service calls.
 // These method applies when the service discovered in the same service
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const REDIRECT_URI = process.env.BASE_URL + "/api/auth/google/callback";
+const REDIRECT_URI = process.env.API_URL + "/api/auth/google/callback";
 const TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token";
 const USERINFO_ENDPOINT = "https://www.googleapis.com/oauth2/v2/userinfo";
 const HOME_URL = process.env.HOME_URL;
@@ -273,11 +284,11 @@ class AuthService {
       password: hashedPassword,
     };
 
-    const id = randomString(25);
-    Registration.insert(id, user);
+    const code = randomString(25);
+    Registration.insert(code, user);
 
     // Implement email confirmation
-    console.log(id);
+    EmailService.sendConfirmation({email, code})
 
     // Return successful response
     return new Response({
@@ -322,6 +333,48 @@ class AuthService {
       }
 
       Registration.dispose(confirm_id);
+
+      return new Response({ ok: true, status: 200, data: { ...savedUser } });
+    } catch (error) {
+      return new Response({ ok: false, status: 500, error: "Internal Server error" });
+    }
+  }
+
+  static async confirmInvitation(req) {
+    try {
+      const { confirm_id } = req.query;
+
+      if (!confirm_id) {
+        return new Response({
+          ok: false,
+          status: 500,
+          error: "Confirm ID is not found!",
+        });
+      }
+
+      const data = Invitation.confirm(confirm_id);
+
+      if (await userExists(data.email)) {
+        Registration.dispose(confirm_id)
+        return new Response({
+          ok: false,
+          status: 400,
+          error: "Registration failed. Email already registered.",
+        });
+      }
+
+      // Save the user to the database
+      const savedUser = data && (await UserResource.insert(data));
+
+      if (!savedUser) {
+        return new Response({
+          ok: false,
+          status: 500,
+          error: "Registration failed. Please try again.",
+        });
+      }
+
+      Invitation.dispose(confirm_id);
 
       return new Response({ ok: true, status: 200, data: { ...savedUser } });
     } catch (error) {

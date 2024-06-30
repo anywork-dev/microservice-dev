@@ -12,6 +12,13 @@ services:
     - "nsm-app.anywork.dev:host-gateway"
     environment:
       - DATABASE_URL=http://nsm-app.anywork.dev:8000
+      - WEB_URL="http://localhost"
+      - FROM_EMAIL=""
+      - CONTACT_SUPPORT=""
+      - EMAIL_SMTP_HOST=""
+      - EMAIL_SMTP_PORT=465
+      - EMAIL_SMTP_USER=""
+      - EMAIL_SMTP_PASSWORD=
       # - DB_PASSWORD=${DB_PASSWORD}
       # - API_KEY=${API_KEY}
       # - JWT_SECRET=${JWT_SECRET}

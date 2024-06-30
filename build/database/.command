@@ -1,0 +1,2 @@
+docker run -d --name nsm-db -e BASEROW_PUBLIC_URL=http://localhost -v C:\Users\fatha\Documents\Projects\anywork\nsm-services\build\database\.data:/baserow/data -p 80:80 -p 443:443 --restart unless-stopped baserow/baserow:1.25.2
+docker run -d --name nocodb -v C:\Users\fatha\Documents\Projects\anywork\nsm-services\build\database\.db:/usr/app/data/ -p 8080:8080 nocodb/nocodb:latest

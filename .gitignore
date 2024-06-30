@@ -2,6 +2,9 @@ node_modules
 .hidden*
 *.drawio*
 build/*/src/*
+build/database/.data/*
+build/database/.nocodb/*
 *secret*
+.env
 
 docker-compose.yml

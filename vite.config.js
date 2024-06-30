@@ -15,5 +15,6 @@ export default defineConfig({
   },
   test: {
     // Vitest configuration options
+    setupFiles: ['./vitest.setup.js']
   },
 });

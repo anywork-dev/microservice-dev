@@ -38,10 +38,16 @@ const subroute = {
       }
     }
   },
-  confirm: {
+  confirm_registration: {
     method: "GET",
     handler(req){
       return AuthService.confirmBasicRegistration(req);
+    }
+  },
+  confirm_invitation: {
+    method: "GET",
+    handler(req){
+      return AuthService.confirmInvitation(req);
     }
   },
   register: {

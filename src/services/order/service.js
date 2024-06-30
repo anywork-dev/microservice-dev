@@ -38,7 +38,7 @@ const userExists = async (email) => {
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
-const REDIRECT_URI = process.env.BASE_URL + "/api/auth/google/callback";
+const REDIRECT_URI = process.env.API_URL + "/api/auth/google/callback";
 const TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token";
 const USERINFO_ENDPOINT = "https://www.googleapis.com/oauth2/v2/userinfo";
 const HOME_URL = process.env.HOME_URL;
