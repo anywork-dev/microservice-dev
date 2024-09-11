@@ -1,7 +1,3 @@
-Here’s the updated description to reflect the name change to **microservice-dev**:
-
----
-
 # microservice-dev
 
 This repository is a template for microservice development, designed to be platform-independent. It emphasizes abstraction over implementation, making it adaptable for various environments.
