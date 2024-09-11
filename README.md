@@ -1,6 +1,10 @@
-# NSM App
+Here’s the updated description to reflect the name change to **microservice-dev**:
 
-NSM App is a multi-platform application supporting Express.js and Cloudflare Workers. The project uses Docker for containerization and `docker-compose` for managing multi-container applications.
+---
+
+# microservice-dev
+
+This repository is a template for microservice development, designed to be platform-independent. It emphasizes abstraction over implementation, making it adaptable for various environments.
 
 ## Table of Contents
 
@@ -24,8 +28,8 @@ NSM App is a multi-platform application supporting Express.js and Cloudflare Wor
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/nsm-app.git
-   cd nsm-app
+   git clone https://github.com/your-username/microservice-dev.git
+   cd microservice-dev
    ```
 
 2. Install dependencies:
@@ -41,7 +45,7 @@ Start the development database using `json-server`:
 ```bash
 npm run dev:database
 ```
-This starts a JSON server on port 8000 serving data from `tests/.data.json`.
+This starts a JSON server on port 8000, serving data from `tests/.data.json`.
 
 ### Building and Running Express.js Platform
 
@@ -68,7 +72,7 @@ This command:
 ## Project Structure
 
 ```plaintext
-nsm-app/
+microservice-dev/
 ├── src/
 │   ├── platform/
 │   │   ├── express/
@@ -90,3 +94,7 @@ nsm-app/
 ## Contributing
 
 Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for more details.
+
+---
+
+Let me know if you need further adjustments!
