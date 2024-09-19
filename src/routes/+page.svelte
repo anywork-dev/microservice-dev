@@ -1,59 +1,43 @@
 <script>
-	import Counter from './Counter.svelte';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
+  import Button from "$lib/components/ui/button/button.svelte";
+  import { onMount } from "svelte";
+
+  let margin = 0;
+  onMount(() => {
+    margin = window.screen.height - window.innerHeight
+  })
 </script>
 
-<svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
-</svelte:head>
-
-<section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
-
-		to your new<br />SvelteKit app
-	</h1>
-
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
-
-	<Counter />
-</section>
+<div class="cover-page flex-grow flex flex-col">
+  <div class="cover flex justify-center flex-grow items-center">
+    <div class="image-container">
+      <img class="wordmark" alt="Logo Expose" src="/wordmark.jpg" />
+    </div>
+  </div>
+  <div class="button-group flex flex-col gap-2" style="padding-bottom: {margin}px;">
+    <Button href="/login">Masuk</Button>
+    <Button href="/signup" variant="outline">Buat akun baru</Button>
+  </div>
+</div>
 
 <style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
-	}
+  .cover-page {
+    padding: 24px 24px;
+  }
 
-	h1 {
-		width: 100%;
-	}
+  .image-container {
+    width: 300px; /* Desired width */
+    height: 70px; /* Desired height */
+    overflow: hidden;
+    position: relative;
+  }
 
-	.welcome {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
-	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
-	}
+  img {
+    width: 100%;
+    height: auto;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 </style>
