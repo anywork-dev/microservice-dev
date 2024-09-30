@@ -1,4 +1,6 @@
 import { goto as _goto } from "$app/navigation";
+import schemas from "./schema/response";
+import { z } from "zod";
 
 const baseUrl = import.meta.env.BASE_URL || "https://anywork.dev";
 
@@ -40,27 +42,23 @@ export class RestService {
      */
     async login(credentials: { email: string; password: string }): Promise<any> {
         try {
-            // const response = await fetch(`${RestService.BASE_URL}/api/login`, {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify(credentials)
-            // });
+            const response = await fetch(`${RestService.BASE_URL}/api/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(credentials)
+            });
 
-            // const data: AuthResponse = await response.json() || {};
-            // if (!response.ok) {
-            //     throw new Error(data.message || 'Login failed')
-            // }
+            const data: z.infer<typeof schemas.loginSchema> = await response.json() || {};
 
-            // mock login data = 
-            const data: AuthResponse = {
-                token: "707cfb4a-17b3-48c9-a8e6-fe1ed6ffa00f",
-                user: {confirmation: true, email: "fathnakbar@gmail.com", id: 101, role: "INVESTOR"}
+            schemas.loginSchema.parse(data)
+
+            if (!response.ok) {
+                throw new Error(data.message || 'Login failed')
             }
 
-            data.token && localStorage.setItem(SESSION_TOKEN, data.token);
-            data.user && localStorage.setItem('user', JSON.stringify(data.user));
+            RestService.store(data.store)
 
 
             return data;
@@ -158,20 +156,17 @@ export class RestService {
     
         try {
             // 1. Fetch the new session
-            // Mock
-            // const response = await fetch(RestService.BASE_URL + '/api/refresh-session', {
-            //     method: 'POST',
-            //     headers: {
-            //         'Authorization': `Bearer ${existingToken}`,
-            //         'Content-Type': 'application/json'
-            //     }
-            // });
+            const response = await fetch(RestService.BASE_URL + '/api/refresh-session', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${existingToken}`,
+                    'Content-Type': 'application/json'
+                }
+            });
 
-            // const data = await response.json();
-
-            const response = {ok: true, status: 200}
-
-            const data: any = {store: {confirmation: {attempts: 1, next: Date.now() + 1000 * 3},token: "asdfasdf", user: {id: 1, role: "investor",confirmation: false, email: "muhammadfathanakabar@gmail.com"}}}
+            const data = await response.json();
+            
+            schemas.refreshSessionSchema.parse(data)
     
             if (!response.ok) {
                 throw {status: response.status || null, message: data.message || "Error refreshing session"}
