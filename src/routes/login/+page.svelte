@@ -3,15 +3,17 @@
   import Input from "$lib/components/ui/input/input.svelte";
   import GoogleIcon from "$lib/icons/google.svelte";
   import { onMount } from "svelte";
+  import { auth } from "$lib/utils";
   import Loading from "$lib/icons/loading.svelte";
-  import { slide } from "svelte/transition";
+  import { slide, fade } from "svelte/transition";
   import { api } from "$lib/api";
-  import { copyIfExists } from "$lib/utils";
+  import { calculate_margin_searchbar, copyIfExists } from "$lib/utils";
   import { goto } from "$app/navigation";
 
   let margin = 0;
+  onMount(async () => await auth())
   onMount(() => {
-    margin = window.screen.height - window.innerHeight;
+    margin = calculate_margin_searchbar();
   });
 
   let loading = false;
@@ -71,6 +73,9 @@
       validate(data);
 
       const result = await api.login(data);
+      
+      // If login succesfull
+      await goto("/app/home")
 	  
     } catch (e: any) {
       error = copyIfExists(error, e) as any
@@ -84,12 +89,8 @@
   <title>Login | Expose</title>
 </svelte:head>
 
-<div
-  id="login-page"
-  class="w-full flex-grow flex flex-col justify-between items-center p-8"
-  in:slide
->
-  <div class="img-container w-24 h-24 pt-16">
+<div class="w-full flex-grow flex flex-col justify-between items-center">
+  <div class="img-container w-24 pt-16" in:slide>
     <img
       src="/logo.png"
       alt="Strong Expose Logo"
@@ -106,7 +107,7 @@
     >
       {error.message}
     </div>
-    <form on:submit|preventDefault={submit} class="w-full flex flex-col gap-4">
+    <form on:submit|preventDefault={submit} class="w-full flex flex-col gap-4" in:fade>
 		<label for="email" class="text-red-500 {error.email ? '' : 'hidden'}">{error.email}</label>
       <Input on:input={() => clearErros("email")} id="email" name="email" class="{error.email ? 'text-red-500' : ''}" type="email" autocomplete="true" placeholder="Email"
       ></Input>

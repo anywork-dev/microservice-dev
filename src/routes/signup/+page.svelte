@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { api } from "$lib/api";
   import { Button } from "$lib/components/ui/button";
   import Input from "$lib/components/ui/input/input.svelte";
@@ -6,13 +7,13 @@
   import GoogleIcon from "$lib/icons/google.svelte";
   import Investor from "$lib/icons/investor.svelte";
   import Loading from "$lib/icons/loading.svelte";
-  import { copyIfExists } from "$lib/utils";
+  import { auth, calculate_margin_searchbar, copyIfExists } from "$lib/utils";
   import { onMount } from "svelte";
-  import { slide } from "svelte/transition";
+  import { slide, fade } from "svelte/transition";
 
   let margin = 0;
   let role = 0;
-  let roles = ["exportir", "investor"];
+  let roles = ["COMPANY", "INVESTOR"];
   let loading: boolean = false;
   let error: {
     message: string;
@@ -25,8 +26,9 @@
     password: "",
     confirmation: "",
   };
+  onMount(async () => await auth())
   onMount(() => {
-    margin = window.screen.height - window.innerHeight;
+    margin = calculate_margin_searchbar();
   });
 
   function setRole(index: number) {
@@ -59,20 +61,23 @@
 
     // Validate email
     if (!email) {
-      errors.email = "Email is required.";
+      errors.email = "Email tidak boleh kosong";
     } else {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailRegex.test(email)) {
-        errors.email = "Invalid email format.";
+        errors.email = "Email tidak valid";
       }
     }
 
     // Validate password
     if (!password) {
-      errors.password = "Password is required.";
+      errors.password = "Password tidak boleh kosong.";
     } else if (password.length < 8) {
-      errors.password = "Password must be at least 8 characters long.";
+      errors.password = "Password harus berisi 8 karakter atau lebih";
+    } else if (!password.match(/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d\-!@#$%^&*]{8,}/g)) {
+      errors.password = "Password harus mengandung setidaknya satu huruf kecil, satu huruf besar, dan satu angka";
     }
+    
 
     // Validate password
     if (!confirmation) {
@@ -94,9 +99,13 @@
       let a = new FormData(event.target as HTMLFormElement);
       const data = Object.fromEntries(a.keys().map((i) => [i, a.get(i)])) as FormFields;
       
+      console.log(data)
+
       validate(data)
 
       const result = await api.register(data as FormFields & {confirmation: undefined})
+
+      await goto("/signup/confirm_required")
 
     } catch (err: any) {
       error = copyIfExists(error, err) as any
@@ -111,10 +120,9 @@
 
 <div
   id="signup-page"
-  class="box-border w-full flex-grow flex flex-col justify-between items-center p-8"
-  in:slide
+  class="w-full flex-grow flex flex-col justify-between items-center"
 >
-  <div class="img-container w-24 pt-16">
+  <div class="img-container w-24 pt-16" in:slide>
     <img
       src="/logo.png"
       alt="Strong Expose Logo"
@@ -122,7 +130,7 @@
       height="auto"
     />
   </div>
-  <div class="input-group w-full flex flex-col gap-4">
+  <div class="input-group w-full flex flex-col gap-4" in:fade>
     <span class="text-slate-600 font-medium">Daftar sebagai</span>
     <div class="flex gap-4">
       <button
@@ -144,8 +152,11 @@
       method="get"
       target="_blank"
       class="w-full flex flex-col gap-4"
+      in:fade
     >
+      <div class="p-4 rouded bg-red-100 text-red-500 {!error.message ? 'hidden' : ''}">{error.message}</div>
       <input type="text" name="role" class="hidden" bind:value={roles[role]} />
+      <label for="email" class="px-2 text-red-500 {error.email ? '' : 'hidden'}">{error.email}</label>
       <Input
         on:input={() => clearErros("email")}
         name="email"
@@ -153,20 +164,27 @@
         type="email"
         class="box-border"
         placeholder="Alamat email cth: example@anywork.dev"
+        required
       ></Input>
+      <label for="password" class="px-2 text-red-500 {error.password ? '' : 'hidden'}">{error.password}</label>
       <Input
         on:input={() => clearErros("password")}
+        id="password"
         name="password"
         type="password"
         class="box-border"
         placeholder="Password"
+        required
       ></Input>
+      <label for="confirmation" class="px-2 text-red-500 {error.confirmation ? '' : 'hidden'}">{error.confirmation}</label>
       <Input
+        id="confirmation"
         on:input={() => clearErros("confirmation")}
-        name="confirm"
+        name="confirmation"
         type="password"
         class="box-border"
         placeholder="Konfrimasi password"
+        required
       ></Input>
       <Button type="submit" class="w-full flex justify-center gap-2">
         <Loading class="{loading ? '' : 'hidden'} w-4 h-4" />

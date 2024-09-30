@@ -3,7 +3,7 @@ import { twMerge } from "tailwind-merge";
 import { cubicOut } from "svelte/easing";
 import type { TransitionConfig } from "svelte/transition";
 import { goto } from "$app/navigation";
-import { api } from "./api";
+import { api, type User, RestService } from "./api";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -73,13 +73,26 @@ export const copyIfExists = (
   );
 };
 
-const site = "/ /login /register".split(" ")
+const open = "/ /login /signup /recovery /new_password /sigup/confirm_required".split(" ")
 
 // TODO: redirect page using goto from $app/navigation
 // redirect to login page if no session found
-export async function auth() {
-  const notopen = site.find(i => i == window.location.pathname)
-  if (!api.session() && !notopen) {
+export async function auth(): Promise<{[index: string]: any} | null> {
+  const is_open = open.find(i => i == window.location.pathname)
+  const session = RestService.session()
+  if (!session && !is_open) {
     await goto("/login");
+    return null;
+  } else if (session){
+    if (!session.user.confirmation){
+      await goto("/signup/confirm_required");
+      return session;
+    }
   }
+  
+  return session;
+}
+
+export function calculate_margin_searchbar(){
+  return (window.screen.height - window.innerHeight) / 2
 }

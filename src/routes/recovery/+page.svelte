@@ -10,7 +10,7 @@
     }
 </script>
 
-<div class="w-full p-8 flex flex-col gap-6">
+<div class="w-full flex flex-col gap-6">
     <div><Button on:click={() => history.back()} variant="outline" class="mb-4"><Back /></Button></div>
     <div class="flex flex-col gap-2">
         <h2 class="text-2xl font-semibold">Pemulihan kata sandi</h2>
