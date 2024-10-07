@@ -1,5 +1,5 @@
 import { goto as _goto } from "$app/navigation";
-import schemas from "./schema/response";
+import schemas from "./schema/auth";
 import { z } from "zod";
 
 const baseUrl = import.meta.env.BASE_URL || "https://anywork.dev";
@@ -23,7 +23,14 @@ export type APIResponse = {message: string, user?: User, token?: string, confirm
 const KeyMapping: any = {token: SESSION_TOKEN, user: USER, confirmation: CONFIRMATION, surveyStatus: SURVEY_STATUS}
 
 interface AuthResponse {
-    token?: string;
+    store: {
+        token?: string;
+        user?: User;
+        confirmation?: {
+            last: number;
+            attempts: number;
+        };
+    }
     user?: User;
     message?: string;
 }
@@ -42,7 +49,7 @@ export class RestService {
      */
     async login(credentials: { email: string; password: string }): Promise<any> {
         try {
-            const response = await fetch(`${RestService.BASE_URL}/api/login`, {
+            const response = await fetch(`${RestService.BASE_URL}/api/v1/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -119,7 +126,7 @@ export class RestService {
      *
      * @returns {Promise<object|null>} A promise that resolves with an object containing the session token if it exists, otherwise null.
      */
-    static session(): {[index: string]: any} {
+    static async session(): Promise<{[index: string]: any}> {
         // Check if the session token exists in localStorage
         const store: {[index: string]: any} = {}
         const maps = Object.entries(KeyMapping)
@@ -127,7 +134,7 @@ export class RestService {
             const key = localStorage.key(i) as string;
             const value = localStorage.getItem(key);
             const standard = (maps.find(([k, v]) => v == key) || [])[0]
-            store[standard || key] = typeof value === "object" ? JSON.stringify(value) : value
+            store[standard || key] = await (new Promise(res => res(JSON.parse(value || "null"))).catch(e => value))
         }
     
         return store
@@ -136,7 +143,7 @@ export class RestService {
     /**
      * Refreshes the user session by sending a request to the server to obtain a new session token and user data.
      * It checks for an existing session token in local storage, and if found, it makes a POST request to the 
-     * '/api/refresh-session' endpoint with the token in the Authorization header. If successful, the new 
+     * '/api/v1/refresh-session' endpoint with the token in the Authorization header. If successful, the new 
      * session information is stored in local storage.
      * 
      * @returns {Promise<{ user: User, token: string } | null>} 
@@ -156,7 +163,7 @@ export class RestService {
     
         try {
             // 1. Fetch the new session
-            const response = await fetch(RestService.BASE_URL + '/api/refresh-session', {
+            const response = await fetch(RestService.BASE_URL + '/api/v1/refresh-session', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${existingToken}`,
@@ -171,8 +178,6 @@ export class RestService {
             if (!response.ok) {
                 throw {status: response.status || null, message: data.message || "Error refreshing session"}
             }
-
-            console.log(data.store)
     
             // 2. Set dynamic token saving
             RestService.store(data.store)
@@ -194,7 +199,7 @@ export class RestService {
      */
     private async _logout(): Promise<any> {
         try {
-            const response = await fetch(`${RestService.BASE_URL}/api/logout`, {
+            const response = await fetch(`${RestService.BASE_URL}/api/v1/logout`, {
                 method: 'POST',
                 credentials: 'include',
             });
@@ -226,7 +231,7 @@ export class RestService {
          }
 
          // If not in localStorage, fetch from API
-         const response = await fetch(`${RestService.BASE_URL}/api/survey-status`, {
+         const response = await fetch(`${RestService.BASE_URL}/api/v1/survey-status`, {
              method: 'GET',
              credentials: 'include',
          });
@@ -244,20 +249,20 @@ export class RestService {
 
     private async _cancelRegistration(token: string){
         try {
-            // const headers: any = {'Content-Type': 'application/json'}
-            // if (token || this.session()?.token) headers.Authorization = "Bearer " + token || this.session()?.token
+            const headers: any = {'Content-Type': 'application/json'}
+            if (token || (await RestService.session())?.token) headers.Authorization = "Bearer " + token || (await RestService.session())?.token
 
-            // const response = await fetch(`${RestService.BASE_URL}/api/cancel_registration`, 
-            //     {
-            //         method: 'POST',
-            //         headers
-            //     });
+            const response = await fetch(`${RestService.BASE_URL}/api/v1/cancel_registration`, 
+                {
+                    method: 'POST',
+                    headers
+                });
 
-            // const result = await response.json();
+            const result = await response.json();
 
-            // if (!response.ok) {
-            //     throw {message: result.message, status: response.status}
-            // }
+            if (!response.ok) {
+                throw {message: result.message, status: response.status}
+            }
 
             RestService.dispose(Object.keys(KeyMapping))
 
@@ -277,17 +282,15 @@ export class RestService {
     private async _requestEmailConfirmation({token}: {token: string}){
         try {
             const headers: any = {'Content-Type': 'application/json'}
-            if (token || RestService.session()?.token) headers.Authorization = "Bearer " + token || RestService.session()?.token
+            if (token || (await RestService.session())?.token) headers.Authorization = "Bearer " + token || (await RestService.session())?.token
 
-            // const response = await fetch(`${RestService.BASE_URL}/api/request_confirmation`, 
-            //     {
-            //         method: 'POST',
-            //         headers
-            //     });
+            const response = await fetch(`${RestService.BASE_URL}/api/v1/request_confirmation`, 
+                {
+                    method: 'POST',
+                    headers
+                });
 
-            const response = {json: async function(){ return {data: {store: {}, message: "sukses"}} }, ok: true, status: 200}
-
-            const {data}: {data: {store: any, message: string}} = (await response.json()) || {data: {}};
+            const data: z.infer<typeof schemas.requestConfirmationSchema> = (await response.json())
 
             if (!response.ok) {
                 throw {message: data.message, status: response.status}
@@ -312,33 +315,26 @@ export class RestService {
     }
 
 
-    async register(details: { email: string; password: string; role: number }): Promise<any> {
+    async register(details: { email: string; password: string; role: number }): Promise<{ok: boolean;data: any}> {
         try {
-            // const response = await fetch(`${RestService.BASE_URL}/api/register`, {
-            //     method: 'POST',
-            //     headers: {
-            //         'Content-Type': 'application/json'
-            //     },
-            //     body: JSON.stringify(details)
-            // });
+            const response = await fetch(`${RestService.BASE_URL}/api/v1/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(details)
+            });
 
-            // const data: AuthResponse = await response.json() || {}
-            // if (!response.ok) {
-            //     throw {data.message || 'Registration failed'}
-            // }
-
-            const data: {store: AuthResponse} = {
-                store: {
-                    token: "707cfb4a-17b3-48c9-a8e6-fe1ed6ffa00f",
-                    user: {confirmation: false, email: "fathnakbar@gmail.com", id: 101, role: "INVESTOR"}
-                }
+            const data: z.infer<typeof schemas.registerSchema> = await response.json() || {}
+            if (!response.ok) {
+                throw {message: data.message || 'Registration failed'}
             }
 
-            await (new Promise((res => setTimeout(res, 3000))))
-
+            schemas.registerSchema.parse(data)
+            
             RestService.store(data.store)
 
-            return data;
+            return {ok: response.ok, data};
         } catch (error) {
             console.error('Registration error:', error);
             throw error;

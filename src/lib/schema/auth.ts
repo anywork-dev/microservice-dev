@@ -3,12 +3,12 @@ import { z } from "zod";
 const loginSchema = z.object({
   store: z.object({
     token: z.string(),
-  user: z.object({
-    confirmation: z.boolean(),
-    email: z.string().email(),
-    id: z.number(),
-    role: z.string(),
-  }),
+    user: z.object({
+      confirmation: z.boolean(),
+      email: z.string().email(),
+      id: z.number(),
+      role: z.string(),
+    }),
   }),
   message: z.string().optional(),
 });
@@ -21,9 +21,9 @@ const refreshSessionSchema = z.object({
     }).optional(),
     token: z.string(),
     user: z.object({
-      id: z.number(),
-      role: z.string(),
-      confirmation: z.boolean().optional(),
+      id: z.number().optional(),
+      role: z.string().optional(),
+      confirmation: z.boolean(),
       email: z.string().email(),
     }),
   }),
@@ -43,17 +43,19 @@ const cancelRegistrationSchema = z.object({
 
 const requestConfirmationSchema = z.object({
   message: z.string(),
-  store: z.object({}).optional(), // Empty object, optional
+  store: z.object({}), // Empty object, optional
 });
 
 const registerSchema = z.object({
-  token: z.string(),
-  user: z.object({
-    confirmation: z.boolean(),
-    email: z.string().email(),
-    id: z.number(),
-    role: z.string(),
+  store: z.object({
+    token: z.string(),
+    confirmation: z.object({ next: z.number(), attempts: z.number() }),
+    user: z.object({
+      confirmation: z.boolean(),
+      email: z.string().email()
+    }),
   }),
+  message: z.string()
 });
 
 export default {

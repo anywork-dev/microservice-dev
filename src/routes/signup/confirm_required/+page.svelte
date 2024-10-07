@@ -26,16 +26,22 @@
     }
 
     onMount(async () => {
-        session = (await auth()) || {}
+        // session = (await auth()) || {}
         try {
           // Check if the email already confirmed locally
           if (session?.user?.confirmation) {
             await goto("/app/home")
           }
+
+          console.log("Refreshing session")
   
           // Check if the email already confirmed remotely
           // If email has been confirmed redirect to home page
-          const result = await api.refreshSession();
+          // const result = await api.refreshSession();
+          // if(result === null) await api.cancelRegistration();
+          const result = {token: "707cfb4a-17b3-48c9-a8e6-fe1ed6ffa00f", confirmation: {next: Date.now() + 1000 * 10, attempts: 1}, user: {confirmation: false, email: "fathnakbar@gmail.com"}, message: "Register successful"}
+
+          
           if (result?.user?.confirmation) {
             await goto("/app/home")
           }
@@ -46,21 +52,14 @@
               masked = masking(emailid) + "@" + domain
           }
   
-          // TODO: improve confirmation by using event source url
+          // TODO: improve confirmation check by using event source url
           // const eventSource = new EventSource('YOUR_SERVER_URL');
-  
-          console.log(result)
   
           // Set next attempt in response
           setInterval(() => {
             nextAttempt = Math.ceil(((result?.confirmation?.next) - Date.now()) / 1000)
           },1000)
   
-  
-          // Mock page loading
-          setTimeout(() => {
-              loading = false
-          }, 3000);
         } catch (error: any) {
           if (error.status === 400) await api.logout()
         }
@@ -93,7 +92,6 @@
     }
 
     async function resend_confirmation() {
-      console.log(nextAttempt >= 0, nextAttempt)
       if (nextAttempt >= 0) {
         return
       }
@@ -127,8 +125,8 @@
         <p class="text-base">Kami telah mengirimkan link ke alamat email {masked}. Cek kotak masuk atau kotak spam</p>
       </div>
       <div class="w-full flex flex-col gap-2">
-        <div class="p-4 bg-green-100 text-green-500 {status ? '' : 'hidden'}" transition:slide>{status}</div>
-        <div class="p-4 bg-red-100 text-red-500 {error ? '' : 'hidden'}" transition:slide>{error}</div>
+        <div class="p-4 bg-green-100 rounded text-green-500 {status ? '' : 'hidden'}" transition:slide>{status}</div>
+        <div class="p-4 bg-red-100 rounded text-red-500 {error ? '' : 'hidden'}" transition:slide>{error}</div>
         {#if !support}
           <Button class="gap-2" variant="default" on:click={() => checkConfirmation()}>
             <Loading class="{confirm_loading ? '' : 'hidden'} w-4 h-4" />
@@ -136,7 +134,7 @@
         {/if}
         <Button on:click={() => resend_confirmation()} class="gap-2" variant="outline" disabled={nextAttempt >= 0}>
           <Loading class="{send_loading ? '' : 'hidden'} w-4 h-4" />
-          Kirim Lagi {nextAttempt >= 0 ? `dalam ${(nextAttempt / 60) < 10 ? '0' : ''}${Math.floor(nextAttempt / 60)}:${nextAttempt < 10 ? '0' : ''}${nextAttempt}` : ''}</Button>
+          Kirim lagi {nextAttempt >= 0 ? `dalam ${(nextAttempt / 60) < 10 ? '0' : ''}${Math.floor(nextAttempt / 60)}:${nextAttempt < 10 ? '0' : ''}${nextAttempt}` : ''}</Button>
           <Button variant="link" on:click={() => cancelRegistration()}>
             Ubah alamat email?</Button>
       </div>

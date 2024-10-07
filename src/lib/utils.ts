@@ -79,12 +79,12 @@ const open = "/ /login /signup /recovery /new_password /sigup/confirm_required".
 // redirect to login page if no session found
 export async function auth(): Promise<{[index: string]: any} | null> {
   const is_open = open.find(i => i == window.location.pathname)
-  const session = RestService.session()
+  const session = await RestService.session()
   if (!session && !is_open) {
     await goto("/login");
     return null;
   } else if (session){
-    if (!session.user.confirmation){
+    if (session.user && !session.user.confirmation){
       await goto("/signup/confirm_required");
       return session;
     }

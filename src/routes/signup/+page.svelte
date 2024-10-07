@@ -98,14 +98,12 @@
       clearErros("message")
       let a = new FormData(event.target as HTMLFormElement);
       const data = Object.fromEntries(a.keys().map((i) => [i, a.get(i)])) as FormFields;
-      
-      console.log(data)
 
       validate(data)
 
       const result = await api.register(data as FormFields & {confirmation: undefined})
 
-      await goto("/signup/confirm_required")
+      if (result.ok) await goto("/signup/confirm_required")
 
     } catch (err: any) {
       error = copyIfExists(error, err) as any

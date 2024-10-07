@@ -13,19 +13,15 @@
     margin = window.screen.height - window.innerHeight;
   });
 
-  onMount(() => auth());
+  // onMount(() => auth()); disable session checking
 </script>
 
 <svelte:head>
   <title>Login | Expose</title>
 </svelte:head>
 
-<div
-  id="survey-page"
-  class="box-border w-full flex-grow flex flex-col justify-between items-center p-8"
-  in:slide
->
-  <div></div>
+<div class="w-full flex-grow flex flex-col justify-between items-center">
+  <div>Hello world</div>
 </div>
 
 <style>
