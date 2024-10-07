@@ -1,44 +1,66 @@
 <script lang="ts">
-  import Button from "$lib/components/ui/button/button.svelte";
-  import { onMount } from "svelte";
-  let margin = 0;
+  import Panel from "$lib/panel.svelte";
 
   const BASE_URL = import.meta.env.BASE_URL
-
-
-
-  onMount(() => {
-    margin = window.screen.height - window.innerHeight
-  })
 </script>
 
-<div class="cover-page flex-grow flex flex-col">
-  <div class="cover flex justify-center flex-grow items-center">
-    <div class="image-container">
-      <img class="wordmark" alt="Logo Expose" src="/wordmark.jpg" />
-    </div>
+<main>
+  <div class="panel" id="header">
+    <div id="title">Hutanika</div>
   </div>
-  <div class="button-group flex flex-col gap-2" style="padding-bottom: {margin}px;">
-    <Button href="/login">Masuk</Button>
-    <Button href="/signup" variant="outline">Buat akun baru</Button>
+  <div class="panel" id="content">
+    <Panel>
+      <div class="flex flex-col items-center">
+        <h1 class="text-2xl">Pesan atas nama?</h1>
+        <input type="text">
+        <button>Mulai</button>
+      </div>
+    </Panel>
   </div>
-</div>
+  <div class="panel" id="footer">
+    Powered By SvelteKit
+  </div>
+</main>
 
 <style>
-
-  .image-container {
-    width: 300px; /* Desired width */
-    height: 70px; /* Desired height */
-    overflow: hidden;
-    position: relative;
+  main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    width: 100vw;
+    height: 100vh;
   }
 
-  img {
+  #header {
     width: 100%;
-    height: auto;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    height: 6%;
+    justify-content: left;
+  }
+
+  #content {
+    width: 100%;
+    height: 86%;
+  }
+
+  #footer {
+    height: 6%;
+    justify-content: end;
+    margin-right: 1em;
+  }
+
+  #title {
+    font-size: 1.5em;
+    font-weight: bold;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin-left: 0.5em;
+  }
+
+  .panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
   }
 </style>

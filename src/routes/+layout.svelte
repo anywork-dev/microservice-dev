@@ -4,8 +4,8 @@
 </script>
 
 <svelte:head>
-  <title>Expose</title>
-  <meta name="description" content="Exporteer Operating System Enterprise" />
+  <title>Hutanika</title>
+  <meta name="description" content="Ordering system for Hutanika" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 </svelte:head>
 
