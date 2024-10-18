@@ -7,4 +7,6 @@ build/database/.nocodb/*
 *secret*
 .env
 
+docs/.vitepress/.cache/*
+
 docker-compose.yml
