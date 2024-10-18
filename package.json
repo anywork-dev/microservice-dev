@@ -17,9 +17,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@panzoom/panzoom": "^4.5.1",
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",
     "cors": "^2.8.5",
+    "d3": "^7.9.0",
     "dotenv": "^16.4.5",
     "esbuild": "^0.21.4",
     "express": "^4.19.2",
