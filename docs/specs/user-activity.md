@@ -47,4 +47,4 @@
 ## User Activity  
 Monitor and analyze user interactions within the system. This section provides insights into user behavior, session tracking, activity logs, and key metrics to optimize user engagement and improve system usability.
 
-<Diagram :code="diagram" />
+<Diagram id="useractivity" :code="diagram" />
