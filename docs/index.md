@@ -7,10 +7,10 @@ hero:
   text: "Software documentation"
   actions:
     - theme: brand
-      text: Desain
-      link: /designs
+      text: Get started
+      link: /intro
     - theme: alt
-      text: Functional Specification
-      link: /functions
+      text: References
+      link: /specs/requirement
 ---
 

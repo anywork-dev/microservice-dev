@@ -13,11 +13,26 @@ export default defineConfig({
 
     sidebar: [
       {
-        text: 'Examples',
+        text: 'Specs',
         items: [
-          { text: 'Markdown Examples', link: '/markdown-examples' },
-          { text: 'Runtime API Examples', link: '/api-examples' }
-        ]
+          { text: 'User Activity', link: '/specs/user-activity' },
+          { text: 'System Architecture', link: '/specs/system-architecture' },
+          { text: 'Class Diagram', link: '/specs/class-diagram' },
+          { text: 'ERD', link: '/specs/erd' },
+          { text: 'Requriements', link: '/specs/requirement' }
+        ],
+        link: "/intro"
+      },
+      {
+        text: 'API References',
+        items: [
+          { text: 'User Activity', link: '/specs/user-activity' },
+          { text: 'System Architecture', link: '/specs/system-architecture' },
+          { text: 'Class Diagram', link: '/specs/class-diagram' },
+          { text: 'ERD', link: '/specs/erd' },
+          { text: 'Requriements', link: '/specs/requirement' }
+        ],
+        link: "/intro"
       }
     ],
 
