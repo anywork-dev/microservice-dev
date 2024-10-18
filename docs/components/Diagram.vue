@@ -6,7 +6,7 @@ import { onMounted, defineProps, ref } from "vue"
 const preview = ref(null);
 const fullScreen = ref(null);
 
-const props = defineProps(["code"])
+const props = defineProps(["id","code"])
 
 onMounted(async () => {
     mermaid.initialize({ startOnLoad: false });
@@ -21,7 +21,7 @@ onMounted(async () => {
 
 
     // Render the Mermaid code and extract the SVG
-    const { svg } = await mermaid.render('mermaidSVG', props.code);
+    const { svg } = await mermaid.render(props.id, props.code);
     // Insert rendered SVG into the container
     preview.value.querySelector(".diagram").innerHTML = svg;
     fullScreen.value.querySelector(".diagram").innerHTML = svg;

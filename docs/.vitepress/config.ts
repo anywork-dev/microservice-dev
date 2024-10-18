@@ -16,21 +16,17 @@ export default defineConfig({
         text: 'Specs',
         items: [
           { text: 'User Activity', link: '/specs/user-activity' },
+          { text: 'Functional Specifications', link: '/specs/functional-spec' },
           { text: 'System Architecture', link: '/specs/system-architecture' },
           { text: 'Class Diagram', link: '/specs/class-diagram' },
           { text: 'ERD', link: '/specs/erd' },
-          { text: 'Requriements', link: '/specs/requirement' }
         ],
         link: "/intro"
       },
       {
-        text: 'API References',
+        text: 'References',
         items: [
-          { text: 'User Activity', link: '/specs/user-activity' },
-          { text: 'System Architecture', link: '/specs/system-architecture' },
-          { text: 'Class Diagram', link: '/specs/class-diagram' },
-          { text: 'ERD', link: '/specs/erd' },
-          { text: 'Requriements', link: '/specs/requirement' }
+          { text: 'Flowchart', link: '/references/flowchart' },
         ],
         link: "/intro"
       }
