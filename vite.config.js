@@ -10,6 +10,7 @@ export default defineConfig({
       'email-client': resolve(__dirname, 'src/lib/email-client.js'),
       'net-tools': resolve(__dirname, 'src/lib/net-tools.js'),
       'auth-service': resolve(__dirname, 'src/services/auth/service.js'),
+      'helper': resolve(__dirname, 'src/lib/helper.js'),
       'platform-router-adapter': resolve(__dirname, 'src/lib/router-adapter.js'),
     },
   },
