@@ -7,10 +7,10 @@ hero:
   text: "Software documentation"
   actions:
     - theme: brand
-      text: Markdown Examples
-      link: /markdown-examples
+      text: Desain
+      link: /designs
     - theme: alt
-      text: API Examples
-      link: /api-examples
+      text: Functional Specification
+      link: /functions
 ---
 
