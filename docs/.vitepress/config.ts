@@ -24,6 +24,11 @@ export default defineConfig({
         link: "/intro"
       },
       {
+        text: 'Designs',
+        items: [],
+        link: "/designs"
+      },
+      {
         text: 'References',
         items: [
           { text: 'Flowchart', link: '/references/flowchart' },
