@@ -198,7 +198,6 @@ This flow outlines the steps to validate user access and generate a `PRIMARY_TOK
 
 This flow ensures that only users physically present in the restaurant (verified by `AUXILIARY_TOKEN`) and with valid credentials (if needed) can receive a `PRIMARY_TOKEN`. This token serves as the primary access key to the system.
 
----
 
 ## Authentication Flow
 
@@ -248,6 +247,33 @@ Below is a breakdown of the **authentication workflow** represented by the `diag
      - User credentials or identity
      - Table number from the URL parameters
      - `PRIMARY_TOKEN` for authentication
+
+## **Auxiliary Token Validation**
+
+The **Auxiliary Token Validation** process ensures secure token generation by using a **hash chaining algorithm**. This approach adds a layer of complexity to prevent unauthorized access and confirm the token’s authenticity. Each token in the chain depends on the **initial hash**, **previous hash (last_hash)**, and an **incrementing hash index**. 
+
+This process ensures that only valid tokens can be generated and validated sequentially, forming a unique, tamper-proof chain.
+
+
+### **Hash Chaining Algorithm Overview:**
+
+The algorithm generates tokens by continuously hashing the **current hash** along with the **previous hash value** in a loop. This chaining ensures that each token depends on its predecessor, making it nearly impossible to predict or manipulate without the previous token.
+
+```python
+def generate_auxiliary_token(last_hash: str, hash_index: int) -> str:
+    cursor = last_hash  # Start with the last known hash
+
+    # Generate the next token in the chain
+    while hash_index < hash_index + 1:
+        a = hash(cursor)  # Compute the hash of the current cursor
+        cursor = hash(str(a) + cursor)  # Update cursor by hashing combined values
+
+    # Increment the hash index to advance in the chain
+    hash_index += 1
+    last_hash = cursor  # Update the last_hash with the new value
+
+    return cursor  # Return the new auxiliary token
+```
 
 ## Office & Admin Authentication
 blabla
