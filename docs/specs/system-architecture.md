@@ -64,6 +64,39 @@ flowchart LR
     end
     `
 
+    const diagram_addItem = 
+    `
+flowchart LR
+    subgraph CLIENT
+        direction LR
+        START@{shape: start} --> A
+        A[Start at /menu or /menu/:id] --> B{Is available?}
+        B --NO--> B1[Disable button] --> F
+        B --YES--> C[/Click Add item/] 
+        C --> D[Save to local]
+        D --> E[(LocalStorage)]
+        E --> F@{shape: stop}
+    end
+    `
+
+    const diagram_checkout = 
+    `
+flowchart LR
+    subgraph CLIENT
+        START@{shape: start} --> A["Get prices"]
+        A --> B[Sum total price include tax]
+        B --> C@{shape: manual, label: "User checks order"}
+        C --> D[Checkout order]
+    end
+    subgraph SERVER
+        SERVER1["Fetch item including tax"] --> DATABASE[(Database)]
+        DATABASE --> SERVER1
+    end
+    CLIENT --"GET /cart?items=[number[]]"--> SERVER
+    SERVER --"Item[]"--> CLIENT
+    CLIENT --> SERVER
+    `
+
     const diagram_authflow = 
     `
 flowchart LR
@@ -92,6 +125,15 @@ This section offers a clear breakdown of how the system is structured and operat
 ### Get Menu
 
 <Diagram :code="diagram_menuList" id="menulist"/>
+
+### Add Item to Cart
+
+<Diagram :code="diagram_addItem" id="additem"/>
+
+### Checkout Cart
+The client fetches the item again when checking out to ensure item's availability in real time
+
+<Diagram :code="diagram_checkout" id="checkout"/>
 
 ## Auth Flow
 

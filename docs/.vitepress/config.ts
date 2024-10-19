@@ -27,6 +27,7 @@ export default defineConfig({
         text: 'References',
         items: [
           { text: 'Flowchart', link: '/references/flowchart' },
+          { text: 'Markdown', link: '/references/example' },
         ],
         link: "/intro"
       }
