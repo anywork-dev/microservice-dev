@@ -1,0 +1,1 @@
+import{_ as e,c as t,o as r}from"./chunks/framework.DyATOcH3.js";const m=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"specs/erd.md","filePath":"specs/erd.md"}'),s={name:"specs/erd.md"};function a(c,o,n,d,p,_){return r(),t("div")}const f=e(s,[["render",a]]);export{m as __pageData,f as default};

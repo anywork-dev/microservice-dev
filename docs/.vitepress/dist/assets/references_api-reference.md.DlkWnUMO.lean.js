@@ -1,0 +1,1 @@
+import{_ as e,c as r,o as t}from"./chunks/framework.DyATOcH3.js";const d=JSON.parse('{"title":"","description":"","frontmatter":{},"headers":[],"relativePath":"references/api-reference.md","filePath":"references/api-reference.md"}'),a={name:"references/api-reference.md"};function c(n,s,o,f,p,i){return t(),r("div")}const m=e(a,[["render",c]]);export{d as __pageData,m as default};
