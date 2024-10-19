@@ -32,7 +32,7 @@ export default defineConfig({
       {
         text: 'References',
         items: [
-          { text: 'API Usage', link: '/references/usage' },
+          { text: 'API Usage', link: '/references/api-usage' },
           { text: 'Flowchart', link: '/references/flowchart' },
           { text: 'Markdown', link: '/references/example' },
         ],

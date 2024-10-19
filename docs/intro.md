@@ -5,7 +5,7 @@
 - [Class Diagram](/specs/class-diagram)  
 - [ERD](/specs/erd)  
 - [Requirements](/specs/functional-spec)    
-- [API References](/references/api-reference)  
+- [API References](/references/api-usage)  
 - [Test Specifications](/specs/test-spec)
 
 # Documentation Overview
