@@ -78,13 +78,13 @@ This document outlines the **User, Admin, and Office APIs** to facilitate menu, 
 
 ### **Menu Management:**
 - **`POST /api/v1/office/menu`**  
-  Creates a **new menu item**.
+  Creates a **new menu item**, including the **initial available quantity** and **ingredients** required for preparation.
 - **`GET /api/v1/office/menu`**  
-  Retrieves the **list of menu items**.
+  Retrieves the **complete list of menu items**.
 - **`GET /api/v1/office/menu/:id`**  
-  Retrieves **details** of a specific menu item.
+  Retrieves **detailed information** about a specific menu item.
 - **`PATCH /api/v1/office/menu/:id`**  
-  Modifies the **details** of a specific menu item.
+  Updates the **details** of a specific menu item, including the **initial available quantity** and **ingredients**.
 
 ### **Menu Category Management:**
 - **`POST /api/v1/office/menu/category`**  
@@ -94,12 +94,13 @@ This document outlines the **User, Admin, and Office APIs** to facilitate menu, 
 - **`PATCH /api/v1/office/menu/category`**  
   Modifies an **existing category**.
 
+
 ### **Stock Management:**
 - **`GET /api/v1/office/stock`**  
-  Retrieves the current **stock information**.
+  Retrieves the current **stock information**, referring to the **ingredients required** for menu preparation.
 - **`GET /api/v1/office/stock/:id`**  
-  Retrieves detailed information for a specific **stock item**.
+  Retrieves **detailed information** about a specific stock item.
 - **`POST /api/v1/office/stock/:id`**  
-  Adds new stock for a specific item.
+  **Adds new stock** for a specific ingredient or item.
 - **`PATCH /api/v1/office/stock/:id`**  
-  Modifies the quantity or details of a specific **stock item**.
+  Updates the **quantity or other details** of a specific stock item.
