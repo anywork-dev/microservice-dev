@@ -18,8 +18,8 @@ export default defineConfig({
           { text: 'User Activity', link: '/specs/user-activity' },
           { text: 'Functional Specifications', link: '/specs/functional-spec' },
           { text: 'System Architecture', link: '/specs/system-architecture' },
-          { text: 'Class Abstraction', link: '/specs/class-diagram' },
-          { text: 'Data Types', link: '/specs/class-diagram' },
+          { text: 'Abstractions', link: '/specs/abstractions' },
+          { text: 'Data Types', link: '/specs/types' },
           { text: 'ERD', link: '/specs/erd' },
         ],
         link: "/intro"

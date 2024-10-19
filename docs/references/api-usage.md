@@ -2,7 +2,6 @@
 
 This document outlines the **User, Admin, and Office APIs** to facilitate menu, order, billing, payment, and stock management processes. The overview ensures clarity on each API's purpose and usage.
 
----
 
 ## **User API**
 
@@ -30,7 +29,6 @@ This document outlines the **User, Admin, and Office APIs** to facilitate menu, 
    - **`POST /api/v1/myorder/bill`**  
      Returns the **total bill amount** from all the user's created orders; does **not create** a new bill.
 
----
 
 ## **Admin API**
 
@@ -72,7 +70,6 @@ This document outlines the **User, Admin, and Office APIs** to facilitate menu, 
 - **`GET /api/v1/admin/qrcode/:table`**  
   Generates and retrieves a **QR code** for the specified table.
 
----
 
 ## **Office API**
 

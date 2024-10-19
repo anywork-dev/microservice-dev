@@ -249,7 +249,8 @@ Below is a breakdown of the **authentication workflow** represented by the `diag
      - Table number from the URL parameters
      - `PRIMARY_TOKEN` for authentication
 
----
+## Office & Admin Authentication
+blabla
 
 ## Get Menu
 

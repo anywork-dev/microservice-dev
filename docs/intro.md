@@ -2,7 +2,7 @@
 
 - [User Activity](/specs/user-activity)  
 - [System Architecture](/specs/system-architecture)  
-- [Class Diagram](/specs/class-diagram)  
+- [Abstractions](/specs/abstractions)  
 - [ERD](/specs/erd)  
 - [Requirements](/specs/functional-spec)    
 - [API References](/references/api-usage)  
@@ -18,7 +18,7 @@ Explore how users interact with the system, including key behaviors, usage patte
 ## [System Architecture](/specs/system-architecture)
 Dive into the structural design of the system, covering components, infrastructure, communication between modules, and data flow within the system.
 
-## [Class Diagram](/specs/class-diagram)
+## [Abstractions](/specs/abstractions)
 Visualize the object-oriented structure through a class diagram, showcasing relationships, hierarchies, and responsibilities of different classes within the system.
 
 ## [ERD (Entity-Relationship Diagram)](/specs/erd)
