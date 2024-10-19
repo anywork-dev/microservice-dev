@@ -82,18 +82,12 @@ flowchart LR
 ## System Architecture
 This section offers a clear breakdown of how the system is structured and operates. It covers the modular design, component interactions, data flow, and infrastructure setup, showing how everything integrates to ensure scalability, performance, and easy maintenance.
 
+## Workflow
 
-## Menu Flow
 
 ### Client Initial Access
 
 <Diagram :code="diagram_menu" id="menuflow"/>
-
-### LAN Server Token
-This token intended to verify if the user is in the restaurant by connecting to 
-restaurant WIFI. The app will request to domain redirected to 
-
-<Diagram :code="diagram_lan" id="lantoken"/>
 
 ### Get Menu
 
@@ -102,3 +96,9 @@ restaurant WIFI. The app will request to domain redirected to
 ## Auth Flow
 
 <Diagram :code="diagram_authflow" id="authflow"/>
+
+### LAN Server Token
+This token intended to verify if the user is in the restaurant by connecting to 
+restaurant WIFI. The app will request to domain redirected to 
+
+<Diagram :code="diagram_lan" id="lantoken"/>
