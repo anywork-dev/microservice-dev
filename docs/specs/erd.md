@@ -60,18 +60,13 @@
         int bill_id
         string payment_status
         date payment_date
+        int method_id
     }
 
-    TABLES {
+    PAYMENT_METHODS {
         int id
-        string table_number
-    }
-
-    ORDER_STATUS_HISTORY {
-        int id
-        int order_id
-        string status
-        date updated_at
+        string method
+        string description
     }
 
     USERS ||--o{ ORDERS: places
@@ -81,8 +76,7 @@
     MENU_ITEMS }o--|| CATEGORIES: belongs_to
     ORDERS }o--|| BILLS: billed_under
     ORDERS }o--|| PAYMENTS: has_payment
-    ORDERS }o--|| TABLES: assigned_to
-    ORDERS ||--o{ ORDER_STATUS_HISTORY: tracks
+    PAYMENTS }o--|| PAYMENT_METHODS: has_method
     `
 </script>
 
@@ -122,13 +116,9 @@ The **ERD (Entity-Relationship Diagram)** represents the data structure and rela
    - **One-to-One or Many-to-One**: Each order or bill can have a payment status.  
      **(ORDERS }o--|| PAYMENTS)**
 
-8. **Orders and Tables**:  
-   - **Many-to-One**: Orders are assigned to specific tables.  
-     **(ORDERS }o--|| TABLES)**
-
-9. **Order Status History**:  
-   - **One-to-Many**: Each order has multiple status updates logged over time.  
-     **(ORDERS ||--o{ ORDER_STATUS_HISTORY)**
+8. **Payment Methods**:  
+   - **One-to-One or Many-to-One**: Each payment can be made using a specific method.
+     **(PAYMENTS }o--|| PAYMENT_METHODS)**
 
 ## **Entities and Attributes:**
 
@@ -198,6 +188,7 @@ The **ERD (Entity-Relationship Diagram)** represents the data structure and rela
      - `bill_id`: Optional foreign key linking to a bill.
      - `payment_status`: Status of the payment (e.g., paid, unpaid).
      - `payment_date`: Date the payment was made.
+     - `method`: Payment method.
 
 ## **Summary of the ERD:**
 
@@ -207,5 +198,3 @@ This ERD captures the essential components of the system:
 - **Order Processing**: Tracks orders, their items, and status changes.
 - **Billing and Payment**: Manages billing and payment status.
 - **Menu and Stock Management**: Associates menu items with stock and categories.
-- **Table Assignment**: Handles table reservations for orders.
-- **Order Status History**: Logs status changes over time for auditing.

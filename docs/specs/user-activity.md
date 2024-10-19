@@ -27,8 +27,8 @@
                 Resepsionis->>Aplikasi: Batalkan pesanan disertai dengan catatan
                 Aplikasi->>Pelanggan: Pesan dibatalkan dengan catatan...
             end
-            alt jika bayar di awal
-                Aplikasi->>Aplikasi: Menunggu status pembayaran
+            opt jika bayar di awal
+                Resepsionis->>Resepsionis: Menunggu pembayaran
                 Pelanggan->>Resepsionis: Bayar pesanan
                 Resepsionis->>Aplikasi: Mengubah status pembayaran
             end
@@ -39,8 +39,8 @@
             Resepsionis->>Pelanggan: Menyajikan makanan
         end
         alt jika bayar di akhir
-            Pelanggan->>Resepsionis: Bayar pesanan
             Resepsionis->>Aplikasi: Cek total tagihan pelanggan
+            Pelanggan->>Resepsionis: Bayar pesanan
             Resepsionis->>Pelanggan: Pembayaran diterima
         end
         Aplikasi->>Pelanggan: Pesanan selesai
