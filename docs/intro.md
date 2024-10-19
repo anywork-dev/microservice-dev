@@ -27,7 +27,7 @@ Understand the database structure and relationships through the ERD, providing c
 ## [Requirements](/specs/functional-spec)
 Explore the comprehensive list of functional requirements, outlining the essential features, behaviors, and constraints the system must meet to ensure seamless performance and user satisfaction.
 
-## [API References](/references/api-reference)
+## [API References](/references/api-usage)
 Access a complete API reference, detailing the available endpoints, authentication methods, query parameters, request formats, and sample responses to facilitate system integrations.
 
 ## [Test Specifications](/specs/test-spec)
