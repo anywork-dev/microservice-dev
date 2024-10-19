@@ -54,9 +54,9 @@ This document outlines the **User, Admin, and Office APIs** to facilitate menu, 
 
 ### **Payment Management:**
 - **`POST /api/v1/admin/payment/:orderid`**  
-  Updates the **payment status** for an order by its ID.
+  Updates the **payment status** for an order by its ID and creates payment record.
 - **`POST /api/v1/admin/payment/:billid`**  
-  Updates the **payment status** for all orders within a **bill**.
+  Updates the **payment status** for all orders within a **bill** and creates payment record.
 
 ### **Stock Management:**
 - **`GET /api/v1/admin/stock`**  
