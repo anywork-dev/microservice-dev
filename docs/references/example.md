@@ -46,4 +46,41 @@ def hello():
 hello()
 ```
 
+## 6. Tables
+| Name       | Age | City      |
+|------------|-----|-----------|
+| John Doe   | 25  | New York  |
+| Jane Smith | 30  | London    |
+
+## 7. Task Lists
+- [x] Task 1 completed  
+- [ ] Task 2 pending  
+- [ ] Task 3 in progress
+
+## 8. Horizontal Rule
+---
+or  
+***
+
+## 9. Escaping Characters
+Use a backslash to escape special characters:  
+\# Escaped H1  
+\*Escaped asterisk\*
+
+## 10. Emojis 😄
+Markdown supports emojis: :rocket: :star:
+
+## 11. Footnotes
+Here is a sentence with a footnote.[^1]
+
+[^1]: This is the footnote.
+
+## 12. HTML in Markdown
+<p style="color:red">This text is red using HTML.</p>
+
+
+---
+
+This example demonstrates the basic elements of Markdown syntax, covering headers, text formatting, links, images, code blocks, lists, tables, task lists, horizontal rules, escaped characters, emojis, footnotes, and even HTML integration. You can use this template as a quick reference for Markdown formatting.
+
 See more on [Vitepress](https://vitepress.dev/guide/markdown)

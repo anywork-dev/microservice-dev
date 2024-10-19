@@ -13,13 +13,18 @@
         end
         subgraph SERVER
             direction TB
-            ROUTES[triggered POST /refresh/certificate] --> SERVER1
+            ROUTES["router.post('/refresh/certificate')"] --> SERVER1
             SERVER1["Fetch hash by id and count"] --> DATABASE[(Database)]
             DATABASE --> VERIFY@{shape: processes, label: "verification"}
             VERIFY --> STATUS{Authorized?} --YES--> SF@{shape: fork}
             SF --> DNS[Change record in DDNS server]
             SF --> RESPONSE["Respond with SSL Certificate"]
         end
+        subgraph DDNS
+            direction TB
+            DDNS1["router.put(/record)"] --UPSERT--> DDNS2[(Address Map)]
+        end
+        SERVER --"ID & IP"--> DDNS
         SERVER --DER format Certificate--> LAN
         LAN --HTTPS--> SERVER
     `
@@ -28,15 +33,28 @@
     `
 flowchart LR
     A[Start] --> B[User scan QR menu. Navigate to '/']
-    B --> B1[Request to LAN server for token]
-    B1 --> C[/Request/]
+    B --> B1[GET /token; Addr=restaurant.domain.com]
+    subgraph DNS_SERVER
+        direction TB
+        DNS1[LISTENING DNS QUERY] --> DNS2[RESOLVE restaurant.domain.com]
+    end
+    subgraph MICROCONTROLLER
+        direction TB
+        M2["GENERATE AUXILIARY_TOKEN"] --> M3["Return type Challange"]
+    end
+    DNS_SERVER -."RESOLVE TO LAN".-> B1
+    B1 -.QUERY DOMAIN.-> DNS_SERVER
+    B1 --LAN--> MICROCONTROLLER
+    B1 --> C[/User name or membership credential/]
     subgraph SERVER
         direction TB
         C1@{shape: processes, label: "Auth Flow"}
+        C1 --> C2{Is valid?}
+        C2 --YES--> C3[PRIMARY_TOKEN]
+        C2 --NO--> C4[401 Unauthorized]
     end
-    C --> SERVER
-    C1 --> D{Access Granted?}
-    D --NO--> C1
+    C --AUXILIARY_TOKEN--> SERVER
+    SERVER --> D{Access Granted?}
     D --YES--> H@{shape: fork}
     H --> E[Redirect to /menu]
     subgraph CLIENT
@@ -45,7 +63,8 @@ flowchart LR
         E --> F[Save table number from URL params]
         F --> A3@{shape: junction}
         J --> A3
-        A3 -.-> G[(LocalStorage)]
+        A3 -.-> G@{shape: internal-storage, label: "LocalStorage"}
+        H --> J1[Save token] --> A3
         
     end
     `
@@ -53,94 +72,315 @@ flowchart LR
     const diagram_menuList = 
     `
 flowchart LR
-    A[Start at '/'] --> B[/Request Menu List/]
-    A --> B1[/Item detail/]
+    A[Start at '/'] --> B[/"GET /menu?category=[string]"/]
+    A --> B1[/"GET /menu/:id"/]
     subgraph Server side
         direction TB
-        B1 --> C1["GET /menu/:id"]
-        B --> C["GET /menu?category=[string]"]
+        B1 --> C1("router.get('/menu/:id')")
+        B --> C["router.get('/menu')"]
         C & C1 -.-> D[(Database)]
         D -.-> C & C1
     end
+    click C1 "https://google.com"
     `
 
     const diagram_addItem = 
     `
 flowchart LR
+    subgraph SERVER
+        A1("router.get('/menu') or router.get('/menu/:id')")
+        DATABASE[(Menu)]
+        A1 --> DATABASE
+    end
     subgraph CLIENT
         direction LR
         START@{shape: start} --> A
-        A[Start at /menu or /menu/:id] --> B{Is available?}
+        A["GET /menu or /menu/:id"] --> B{Is available?}
         B --NO--> B1[Disable button] --> F
         B --YES--> C[/Click Add item/] 
         C --> D[Save to local]
-        D --> E[(LocalStorage)]
+        D --> E@{shape: internal-storage, label: "LocalStorage"}
         E --> F@{shape: stop}
     end
+    A --> REQUEST["Request with optional category or id"]
+    --> SERVER
+    SERVER --> RESPONSE["Respond with type Menu[]"]
+    --> CLIENT
+    click DATABASE "https://google.com"
     `
 
     const diagram_checkout = 
     `
 flowchart LR
     subgraph CLIENT
-        START@{shape: start} --> A["Get prices"]
-        A --> B[Sum total price include tax]
-        B --> C@{shape: manual, label: "User checks order"}
-        C --> D[Checkout order]
+        START@{shape: start} --> A["Get order bill\nPOST /cart/bill"]
+        A --> C@{shape: manual, label: "User checks order manually"}
+        C --> D["User checkout the order\nPOST /cart/checkout"]
+        D --> E["redirect to /myorder"]
     end
     subgraph SERVER
-        SERVER1["Fetch item including tax"] --> DATABASE[(Database)]
-        DATABASE --> SERVER1
+        REQUEST@{shape: fork} --> SERVER1 & SERVER2 --> DATABASE[(Database)]
+        SERVER1("router.get('/cart/bill')")
+        SERVER2("router.post('/cart/checkout')")
     end
-    CLIENT --"GET /cart?items=[number[]]"--> SERVER
-    SERVER --"Item[]"--> CLIENT
-    CLIENT --> SERVER
+    CLIENT --Request--> SERVER
+    SERVER --> RESPONSE[Respond with Order] --> CLIENT
     `
 
-    const diagram_authflow = 
+    const diagram_primary_auth = 
     `
 flowchart LR
-    A[Start] --> C1[primary token] --> C
-    C{Is membership needed?}
-    C --YES--> D[/Sign In or Sign Up/]
-    D --> F1{Success?}
-    F1 --NO--> D
-    C --NO--> E[/Input Name/]
-    E --> F@{shape: junction}
-    F1 --YES--> F
-    F --> G[Grant Access]
+    A[Start] --> C1[/AUXILIARY_TOKEN/]
+    C1 --> C3[Token Validation] --> C4{Is valid?}
+    C4 --NO--> C5[401 Unauthorized]
+    C4 --YES--> J[Generate PRIMARY_TOKEN]
+
+    A --> C{Is membership needed?}
+    C --NO--> B[/Input user name/]
+    B --> J
+
+    C --YES--> C2[/Input Membership Credential/]
+    C2 --> B1[Credential Validation]
+    B1 --> B2{Is valid?}
+    B2 --NO--> C5[401 Unauthorized]
+    B2 --YES--> J
     `
 </script>
 
 ## System Architecture
 This section offers a clear breakdown of how the system is structured and operates. It covers the modular design, component interactions, data flow, and infrastructure setup, showing how everything integrates to ensure scalability, performance, and easy maintenance.
 
-## Workflow
+## Primary Token Authentication Flow
+This flow outlines the steps to validate user access and generate a `PRIMARY_TOKEN` based on the presence of an `AUXILIARY_TOKEN` and, optionally, membership credentials.
+
+<Diagram :code="diagram_primary_auth" id="authflow"/>
+
+#### **Step-by-Step Flow Explanation**
+
+1. **Start**:  
+   - The process begins when the authentication request is initiated.
+
+2. **AUXILIARY_TOKEN Validation**:  
+   - The `AUXILIARY_TOKEN` is provided and sent for **Token Validation**.
+   - **Decision Point**:  
+     - If the `AUXILIARY_TOKEN` is **valid**, the flow moves forward.
+     - If **invalid**, the system returns a **401 Unauthorized** response.
+
+3. **Check Membership Requirement**:  
+   - The system checks if **membership credentials** are required for further access.  
+     - **If membership is not required**:
+       - The user is prompted to **input their name**.
+       - The flow proceeds to the **PRIMARY_TOKEN generation**.
+
+     - **If membership is required**:
+       - The user is asked to provide **membership credentials**.
+       - The credentials are sent for **Credential Validation**.
+
+4. **Credential Validation**:  
+   - The membership credentials are checked for validity.
+     - **If valid**, the process proceeds to **generate the PRIMARY_TOKEN**.
+     - **If invalid**, the system returns a **401 Unauthorized** response.
+
+5. **Generate PRIMARY_TOKEN**:  
+   - Once all checks are passed, the system generates a **PRIMARY_TOKEN** to grant access.
+
+6. **End of Flow**:  
+   - The token can now be used to access the restricted parts of the system or platform.
 
 
-### Client Initial Access
+#### **Summary of Decisions and Actions**
+
+1. **Validation of AUXILIARY_TOKEN**: If invalid, authentication fails with **401 Unauthorized**.
+2. **Membership Check**:  
+   - If membership is not needed, the user simply enters their name.
+   - If required, membership credentials are validated.
+3. **Generation of PRIMARY_TOKEN**: Occurs only if all required validations pass.
+
+This flow ensures that only users physically present in the restaurant (verified by `AUXILIARY_TOKEN`) and with valid credentials (if needed) can receive a `PRIMARY_TOKEN`. This token serves as the primary access key to the system.
+
+---
+
+## Authentication Flow
+
+`AUXILIARY_TOKEN` is a token generated and retrieved exclusively over the **Local Area Network (LAN)**. This mechanism ensures that the request originates from within the restaurant’s local environment, confirming the user's physical presence. The `AUXILIARY_TOKEN` plays a critical role in the authentication process by being a prerequisite to generating the `PRIMARY_TOKEN`. 
+
+Once generated, the `AUXILIARY_TOKEN` is sent back to the client as part of a **Challenge** object, which includes necessary identifiers for tracking and validation.
+
+**Challenge Structure:**  
+```typescript
+typeof Challenge = { index: number, id: number, auxiliary_token: string };
+```
+- **index**: A numerical value representing hash index.  
+- **id**: An identifier to associate the token with the specific request.  
+- **auxiliary_token**: The generated token that verifies the user's physical presence in the restaurant.
 
 <Diagram :code="diagram_menu" id="menuflow"/>
 
-### Get Menu
+#### **Authentication Workflow Description**
+
+Below is a breakdown of the **authentication workflow** represented by the `diagram_menu` flowchart:
+
+1. **User Action**:  
+   - The user scans a **QR code** to access the restaurant menu. This directs the user to `/` (the main route).
+   
+2. **Token Retrieval**:  
+   - The **client-side application** sends a `GET /token` request to `restaurant.domain.com`.
+   
+3. **DNS Resolution**:  
+   - A **DNS query** is triggered to resolve the domain, and the response is forwarded to the restaurant's server.
+
+4. **AUXILIARY_TOKEN Generation**:  
+   - A **microcontroller** on the LAN generates the `AUXILIARY_TOKEN` and responds with a **Challenge** object. The challenge includes the `index`, `id`, and `auxiliary_token`.
+   - The response was saved in local storage.
+
+5. **Authentication Flow**:
+   - The user submits their **name** or **membership credentials**.
+   - The **server** validates the credentials and checks the provided `AUXILIARY_TOKEN`.
+   - If validation is successful, the server generates the `PRIMARY_TOKEN` and sends it to the client. If unsuccessful, a **401 Unauthorized** response is returned.
+
+6. **Access and Redirection**:
+   - Once authenticated, the server determines if access is granted. If successful:
+     - The user is redirected to `/menu`.
+     - The **user identity (name/credential)** and **table number** from the URL parameters are saved locally.
+
+7. **Client-Side Storage**:
+   - The following data is saved to **LocalStorage** for the session:
+     - User credentials or identity
+     - Table number from the URL parameters
+     - `PRIMARY_TOKEN` for authentication
+
+---
+
+## Get Menu
 
 <Diagram :code="diagram_menuList" id="menulist"/>
 
-### Add Item to Cart
+## Add Item to Cart
+This flow describes how the system handles a request to **retrieve menu items** and the subsequent process of **adding an item to the user's order**, with interaction between the client, server, and local storage.
+
 
 <Diagram :code="diagram_addItem" id="additem"/>
 
-### Checkout Cart
-The client fetches the item again when checking out to ensure item's availability in real time
+### **Step-by-Step Flow Explanation**
+
+##### **1. Start (Client Side)**
+- The process begins when the client initiates a request to **retrieve the menu** or a specific menu item using the following endpoints:
+  - **`GET /menu`**: Retrieve the full menu.
+  - **`GET /menu/:id`**: Retrieve a specific item based on its ID.
+
+##### **2. Send Request to Server**
+- The client sends a **GET request** with optional parameters (category or ID) to the **server**.
+
+##### **3. Server-Side Processing**
+- **Router Handling**:  
+  The server handles the request using:
+  - `router.get('/menu')`: Retrieves the entire menu.
+  - `router.get('/menu/:id')`: Retrieves a specific menu item.
+
+- **Database Query**:  
+  The server queries the **Menu database** for the requested data.
+
+##### **4. Response from Server**
+- The server responds with a **list of menu items** (or a specific item) to the client.
+
+##### **5. Availability Check (Client Side)**
+- Once the client receives the response:
+  - **Is Available?**: The client checks if the item(s) are available.
+    - **If NO**:  
+      - The **add item button** is **disabled** to prevent further action.
+    - **If YES**:  
+      - The user can **click the "Add Item" button** to proceed.
+
+##### **6. Save Item to Local Storage**
+- Upon clicking "Add Item", the selected item is:
+  1. **Saved to LocalStorage** on the client side to retain the user's order.
+  2. Ensures the item remains available even if the page is refreshed.
+
+##### **7. End of Flow**
+- The process ends with the updated order saved to **LocalStorage**.
+
+#### **Summary of Actions**
+
+1. **Request to Server**: Retrieves either the complete menu or specific item.
+2. **Availability Check**: Controls whether the user can add the item.
+3. **Save to LocalStorage**: Preserves the user's order locally.
+4. **End of Flow**: Ensures the process completes seamlessly, with the order retained across sessions.
+
+
+## Order Bill and Checkout Flow
+The **Order Bill and Checkout Flow** ensures users receive the most accurate bill by dynamically calculating item prices based on real-time data. This flow enhances transparency by retrieving current prices from the server, multiplying them by their quantities, and allowing users to review the total bill before confirming checkout.  
 
 <Diagram :code="diagram_checkout" id="checkout"/>
 
-## Auth Flow
+### **Step-by-Step Flow Explanation**
 
-<Diagram :code="diagram_authflow" id="authflow"/>
+#### **1. Start (Client Side)**  
+- The process begins when the user initiates a **POST /cart/bill** request to retrieve a detailed bill of their order.
 
-### LAN Server Token
-This token intended to verify if the user is in the restaurant by connecting to 
-restaurant WIFI. The app will request to domain redirected to 
+#### **2. Fetch Order Bill (Client Side)**  
+- The client sends a **POST /cart/bill** request to the server, which retrieves:
+  - The **current prices** of each item from the database.
+  - **Quantities** for each item in the user’s cart.
+  - **Total price**: Calculated by multiplying item prices by their respective quantities.
+
+#### **3. Manual Review by User**  
+- The user receives the **detailed bill** and checks:
+  - **Item names**  
+  - **Quantities**  
+  - **Individual prices**  
+  - **Total amount** (sum of all items)
+
+- This ensures the user has the chance to verify and make any changes before proceeding with checkout.
+
+#### **4. User Initiates Checkout (Client Side)**  
+- Once the user is satisfied, they initiate the checkout by sending a **POST /cart/checkout** request to the server.
+
+#### **5. Server Handling (Server Side)**  
+- The server handles the following requests:
+  1. **`router.get('/cart/bill')`**: Retrieves item prices and calculates the total bill based on the **most recent data**.
+  2. **`router.post('/cart/checkout')`**: Finalizes the order, updates inventory, and reflects the changes in the database.
+
+#### **6. Forked Request and Database Handling**  
+- Both requests interact with the **database**:
+  - **Bill retrieval** ensures the user receives accurate pricing.
+  - **Checkout finalization** updates the database to reflect any inventory changes.
+
+#### **7. Response to Client**  
+- After the checkout, the server responds with the **final order confirmation**, ensuring the transaction was successful.
+
+
+#### **8. Redirect to /myorder**  
+- If checkout successful, redirect to /myorder to view order list
+
+### **Summary of Actions**
+
+1. **Accurate Bill Calculation**: The **POST /cart/bill** request ensures the most recent prices are used, multiplied by the quantities of each item.
+2. **User Review**: The user manually reviews the bill to confirm that the order is correct.
+3. **Real-Time Inventory Update**: During checkout, the server updates the database to reflect inventory changes.
+4. **Clear Communication**: Real-time responses provide transparency throughout the process.
+
+## My Order List/Detail
+Check order queue status (top queue, order queue number). 
+
+## Get Order Queue (Admin)
+In Order Queue or Waiting list
+
+## Manage Order (Admin)
+Accept/Reject/Ready
+
+## Create Order Bill (Admin)
+Merge bill by name, table, or custom selection (in case someone want to pay other). This was intended just to join order in single bill. So the resepsionist don't have to create payment each
+
+## Create payment (Admin)
+Just to change order
+
+## Create Order (Admin)
+Directly create order to In Order Queue
+
+## Stock Management (Admin)
+Set initial stock quantitiy, or change current quantity
+
+## Install Certificate on Microcontroller
+This installs SSL Certification on Microcontroller
 
 <Diagram :code="diagram_lan" id="lantoken"/>
