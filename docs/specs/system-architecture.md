@@ -276,7 +276,20 @@ def generate_auxiliary_token(last_hash: str, hash_index: int) -> str:
 ```
 
 ## Office & Admin Authentication
-blabla
+Authentication for Admin and Office didn't use **proximity challenge**.
+
+<Diagram :code="`
+flowchart LR
+  A@{shape: start} --> B[/User credential/]
+  subgraph SERVER
+    direction LR
+    S(router.post /admin/auth ) --> SV[Validation] --> S1{Is valid?}
+    S1 --YES--> RESPONSE[PRIMARY_TOKEN]
+    S1 --NO--> RESPONSE1[401 Unauthorized]
+  end
+  B --> SERVER
+  SERVER --RESPONSE--> END@{shape: stop}
+`" id="officeauth" />
 
 ## Get Menu
 
@@ -386,28 +399,61 @@ The **Order Bill and Checkout Flow** ensures users receive the most accurate bil
 3. **Real-Time Inventory Update**: During checkout, the server updates the database to reflect inventory changes.
 4. **Clear Communication**: Real-time responses provide transparency throughout the process.
 
-## My Order List/Detail
-Check order queue status (top queue, order queue number). 
+## **My Order List/Detail**  
+Displays the **current status** of a user's order in the queue, including its **position in the queue** and **queue number**.
 
-## Get Order Queue (Admin)
-In Order Queue or Waiting list
+## Admin and Office
 
-## Manage Order (Admin)
-Accept/Reject/Ready
+### **Get Order Queue (Admin)**  
+Retrieves the **list of orders** currently in the **order queue** or **waiting list**.
 
-## Create Order Bill (Admin)
-Merge bill by name, table, or custom selection (in case someone want to pay other). This was intended just to join order in single bill. So the resepsionist don't have to create payment each
+### **Manage Order (Admin)**  
+Allows the admin to **accept, reject, or mark orders as ready** for processing or delivery.
 
-## Create payment (Admin)
-Just to change order
+### **Create Order Bill (Admin)**  
+Enables merging of multiple orders into a **single bill** by **name, table, or custom selection**, making it easier for receptionists to manage combined payments.
 
-## Create Order (Admin)
-Directly create order to In Order Queue
+### **Create Payment (Admin)**  
+Used to **update the payment status** of an order after processing, without needing to re-create the order.
 
-## Stock Management (Admin)
-Set initial stock quantitiy, or change current quantity
+### **Create Order (Admin)**  
+Allows the admin to **directly add an order** to the **In Order Queue** for processing.
 
-## Install Certificate on Microcontroller
-This installs SSL Certification on Microcontroller
+### **Stock Management (Admin)**  
+Lets the admin **set the initial stock quantity** for items or **update the current quantity** based on inventory changes.
+
+### **Manage Menu (Office)**
+Create or modify menu items, including ingredients, daily prices, and initial quantity.
+
+### **Manage Categories (Office)**
+Set and organize menu categories.
+
+### **Manage Stock (Office)**
+Define daily initial stock and update current stock levels.
+
+
+<Diagram :code="`
+flowchart TD
+    subgraph User
+        U1[My Order List/Detail] --> U2[Check order queue status top queue, order number]
+    end
+    subgraph Admin
+        A1[Get Order Queue] --> A2[View In Order Queue or Waiting List]
+        A3[Manage Order] --> A4[Accept/Reject/Ready]
+        A5[Create Order Bill] --> A6[Merge by name, table, or custom selection]
+        A6 --> A7[Avoid creating individual payments for each order]
+        A8[Create Payment] --> A9[Change order payment status]
+        A10[Create Order] --> A11[Add order directly to In Order Queue]
+        A12[Stock Management] --> A13[Set initial stock quantity]
+        A13 --> A14[Update current stock quantity]
+        A15[Install Certificate on Microcontroller] --> A16[Install SSL certificate for secure communication]
+    end
+    A3 --> A5
+    A5 --> A8
+    A10 --> A3
+`" id="admin"/>
+
+## **Install Certificate on Microcontroller**  
+Installs an **SSL certificate** on the microcontroller to ensure **secure communication**.
 
 <Diagram :code="diagram_lan" id="lantoken"/>
