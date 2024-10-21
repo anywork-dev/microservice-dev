@@ -291,7 +291,7 @@ flowchart LR
   SERVER --RESPONSE--> END@{shape: stop}
 `" id="officeauth" />
 
-## User signup and Admin Invitation
+## Signup Overview
 
 <Diagram :code="`
 flowchart LR
@@ -307,6 +307,36 @@ flowchart LR
   D1 & D2 & D3 --> E[Code confirmed] --> E1[Create user]
   B1 --> C5[Send link] --> E2[Confirmed] --> E3[Create user]
 `" id="signup" />
+
+## Signup with Whatsapp/Email
+
+<Diagram :code="`
+flowchart LR
+  A@{shape: start} --> B[/Input whatsapp phone number/]
+  subgraph SERVER
+    S(router.post /api/v1/signup)
+    S --> S1[Check if phone hasn't been taken]
+    S1 --> S2[Create random code & Store to cache]
+    S2 --> S3[Send code to phone number]
+    S3 --> S4[Redirect user to waiting page]
+    S3 --> S5[Respond attempts_token, resend_schedule]
+  end
+  SERVER --> C{user clicks link?} --YES--> D[Redirect to confirmation page]
+  D --> E{attempts_token exists?}
+  E --NO--> ER[Hide continue button]
+  ER --> EE[User back to waiting page] --> EE1[Click continue to check confirmation]
+  EE1 --> EE2{Confirmed?} --YES--> EE3[Return token and redirect to /home]
+  EE2 --NO--> EE4[Prompt user to confirm]
+  E --YES--> ER1[Show continue button]
+  E --> EC@{shape: comment, label: 'Because user can confirm from other device'}
+  C --NO--> E1{Link was delivered?}
+  E1 --NO--> F[Resend link]
+  subgraph SERVER_1
+    M(router.post resendLink)
+  end
+  F --> SERVER_1
+  B --> SERVER
+`" id="whatsapp" />
 
 ## Get Menu
 
