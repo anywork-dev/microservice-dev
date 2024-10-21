@@ -52,11 +52,17 @@ This document outlines the **User, Admin, and Office APIs** to facilitate menu, 
 - **`POST /api/v1/admin/bill`**  
   **Creates a bill** by joining multiple orders using their IDs.
 
-### **Payment Management:**
-- **`POST /api/v1/admin/payment/:orderid`**  
-  Updates the **payment status** for an order by its ID and creates payment record.
-- **`POST /api/v1/admin/payment/:billid`**  
-  Updates the **payment status** for all orders within a **bill** and creates payment record.
+### **Create Payment**   
+- **`POST /api/v1/admin/payment`**  
+  Creates a **payment record** and assigns a **payment_id** to the specified **bill_id**, linking it to the associated order(s).
+
+### **Menu Management:**
+- **`GET /api/v1/office/menu`**  
+  Retrieves the **complete list of menu items**.
+- **`GET /api/v1/office/menu/:id`**  
+  Retrieves **detailed information** about a specific menu item.
+- **`PATCH /api/v1/office/menu/:id`**  
+  Updates the **status** or **current available quantity** of a menu item. Quantity changes are only allowed if the status is **active**.
 
 ### **Stock Management:**
 - **`GET /api/v1/admin/stock`**  
