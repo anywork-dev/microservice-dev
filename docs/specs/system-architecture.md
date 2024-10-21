@@ -291,6 +291,23 @@ flowchart LR
   SERVER --RESPONSE--> END@{shape: stop}
 `" id="officeauth" />
 
+## User signup and Admin Invitation
+
+<Diagram :code="`
+flowchart LR
+  A@{shape: start} --> B[User Signup]
+  A --> B1[Admin and Office Invitation]
+  B --> C{As guest?} --YES--> C1[/Input name/]
+  C --> C2{with email?}
+  C2 --YES--> D1[Send code to email]
+  C2 --NO--> C3{with Google?}
+  C3 --YES--> D2[Redirect to Google SignIn]
+  C3 --NO--> C4[With whatsapp number]
+  C4 --YES--> D3[Send link to whatsapp number]
+  D1 & D2 & D3 --> E[Code confirmed] --> E1[Create user]
+  B1 --> C5[Send link] --> E2[Confirmed] --> E3[Create user]
+`" id="signup" />
+
 ## Get Menu
 
 <Diagram :code="diagram_menuList" id="menulist"/>
