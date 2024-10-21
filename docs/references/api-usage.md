@@ -107,3 +107,8 @@ This document outlines the **User, Admin, and Office APIs** to facilitate menu, 
   **Adds new stock** for a specific ingredient or item.
 - **`PATCH /api/v1/office/stock/:id`**  
   Updates the **quantity or other details** of a specific stock item.
+
+
+## Import Postman Collections
+
+[Postman Collection](/assets/postman.json)

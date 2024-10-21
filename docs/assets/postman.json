@@ -1,0 +1,198 @@
+{
+    "info": {
+      "name": "API v1 Endpoints",
+      "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+      {
+        "name": "Sign In",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "url": { "raw": "http://localhost:3000/api/v1/signin" },
+          "body": {
+            "mode": "raw",
+            "raw": "{ \"email\": \"user@example.com\", \"password\": \"your_password\" }"
+          }
+        }
+      },
+      {
+        "name": "Sign Up",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "url": { "raw": "http://localhost:3000/api/v1/signup" },
+          "body": {
+            "mode": "raw",
+            "raw": "{ \"name\": \"User\", \"email\": \"user@example.com\", \"password\": \"your_password\" }"
+          }
+        }
+      },
+      {
+        "name": "Get Menu",
+        "request": {
+          "method": "GET",
+          "url": { "raw": "http://localhost:3000/api/v1/menu" }
+        }
+      },
+      {
+        "name": "Get Menu by ID",
+        "request": {
+          "method": "GET",
+          "url": { "raw": "http://localhost:3000/api/v1/menu/1" }
+        }
+      },
+      {
+        "name": "Create Bill",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "url": { "raw": "http://localhost:3000/api/v1/cart/bill" },
+          "body": {
+            "mode": "raw",
+            "raw": "{ \"items\": [{ \"menuItemId\": 1, \"quantity\": 2 }] }"
+          }
+        }
+      },
+      {
+        "name": "Cart Checkout",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "url": { "raw": "http://localhost:3000/api/v1/cart/checkout" },
+          "body": {
+            "mode": "raw",
+            "raw": "{ \"items\": [{ \"menuItemId\": 1, \"quantity\": 2 }], \"tableId\": 5 }"
+          }
+        }
+      },
+      {
+        "name": "Get My Orders",
+        "request": {
+          "method": "GET",
+          "url": { "raw": "http://localhost:3000/api/v1/myorder?userId=1" }
+        }
+      },
+      {
+        "name": "Get My Order by ID",
+        "request": {
+          "method": "GET",
+          "url": { "raw": "http://localhost:3000/api/v1/myorder/1" }
+        }
+      },
+      {
+        "name": "Get All Orders (Admin)",
+        "request": {
+          "method": "GET",
+          "url": { "raw": "http://localhost:3000/api/v1/admin/order" }
+        }
+      },
+      {
+        "name": "Create Admin Order",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "url": { "raw": "http://localhost:3000/api/v1/admin/order" },
+          "body": {
+            "mode": "raw",
+            "raw": "{ \"userId\": 1, \"tableId\": 2, \"items\": [{ \"menuItemId\": 1, \"quantity\": 3, \"price\": 50 }] }"
+          }
+        }
+      },
+      {
+        "name": "Update Admin Order Status",
+        "request": {
+          "method": "PATCH",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "url": { "raw": "http://localhost:3000/api/v1/admin/order/1" },
+          "body": {
+            "mode": "raw",
+            "raw": "{ \"status\": \"CANCELLED\" }"
+          }
+        }
+      },
+      {
+        "name": "Get All Bills (Admin)",
+        "request": {
+          "method": "GET",
+          "url": { "raw": "http://localhost:3000/api/v1/admin/bill" }
+        }
+      },
+      {
+        "name": "Create Admin Payment",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "url": { "raw": "http://localhost:3000/api/v1/admin/payment" },
+          "body": {
+            "mode": "raw",
+            "raw": "{ \"paymentMethod\": \"CREDIT_CARD\", \"orderid\": 1 }"
+          }
+        }
+      },
+      {
+        "name": "Get Stock Items",
+        "request": {
+          "method": "GET",
+          "url": { "raw": "http://localhost:3000/api/v1/admin/stock" }
+        }
+      },
+      {
+        "name": "Update Stock Item",
+        "request": {
+          "method": "PATCH",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "url": { "raw": "http://localhost:3000/api/v1/admin/stock/1" },
+          "body": {
+            "mode": "raw",
+            "raw": "{ \"availableQuantity\": 20 }"
+          }
+        }
+      },
+      {
+        "name": "Generate QR Code",
+        "request": {
+          "method": "GET",
+          "url": { "raw": "http://localhost:3000/api/v1/admin/qrcode/10" }
+        }
+      },
+      {
+        "name": "Create Office Menu",
+        "request": {
+          "method": "POST",
+          "header": [
+            { "key": "Content-Type", "value": "application/json" }
+          ],
+          "url": { "raw": "http://localhost:3000/api/v1/office/menu" },
+          "body": {
+            "mode": "raw",
+            "raw": "{ \"name\": \"New Dish\", \"price\": 9.99, \"initialQuantity\": 5, \"categoryId\": 2 }"
+          }
+        }
+      },
+      {
+        "name": "Get Office Menu by ID",
+        "request": {
+          "method": "GET",
+          "url": { "raw": "http://localhost:3000/api/v1/office/menu/1" }
+        }
+      }
+    ]
+  }
+  
