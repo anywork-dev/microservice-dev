@@ -17,8 +17,16 @@
         loop membuat pesanan
             Pelanggan->>Aplikasi: Akses menu
             Pelanggan->>Pelanggan: Pilih menu
+            opt jika berbagi keranjang
+                Pelanggan->>Aplikasi: Meminta link keranjang
+                Aplikasi->>Pelanggan: Memberikan QR code keranjang
+                Pelanggan->>Aplikasi: Pelanggan lain memasukkan QR code
+            end
             Pelanggan->>Aplikasi: Tambahkan ke keranjang
-            Pelanggan->>Aplikasi: Cek Bill sebelum melanjutkan
+            Pelanggan->>Aplikasi: Cek keranjang sebelum melanjutkan
+            alt jika bukan pemilik keranjang
+                Pelanggan-xAplikasi: Tidak bisa checkout keranjang
+            end
             Pelanggan->>Aplikasi: Checkout keranjang
             Aplikasi->>Resepsionis: Tambah ke antrian pesanan
             Resepsionis->>Resepsionis: Cek antrian pesanan

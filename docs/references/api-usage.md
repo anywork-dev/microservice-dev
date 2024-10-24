@@ -22,7 +22,7 @@ This document outlines the **User, Admin, and Office APIs** to facilitate menu, 
    Synchronizes the local cart with the server to maintain consistency.
 - **`POST /api/v1/cart/share`**  
    Shares the user’s cart with others, allowing them to add items. Ideal for group orders with item tracking and bill splitting.
-- **`POST /api/v1/cart/placeorder`**  
+- **`POST /api/v1/cart/checkout`**  
    Converts the cart into an order and adds it to the waiting queue for processing.
 
 3. **Order Operations:**
