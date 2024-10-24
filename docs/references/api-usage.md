@@ -13,15 +13,17 @@ This document outlines the **User, Admin, and Office APIs** to facilitate menu, 
 
 ### **2. Cart Operations**  
 - **`GET /api/v1/cart`**  
-   Retrieves or initializes the user’s cart.
+   Retrieves the user’s cart. Additionally, it fetches an auxiliary token to control the availability of the place order button.
 - **`POST /api/v1/cart/add`**  
-   Adds items to the user’s cart.
+   Adds items to the existing cart or initializes a new one if no cart exists.
+- **`PATCH /api/v1/cart`**  
+   Updates the quantity of an item or removes it from the cart. Useful for modifying individual items.
 - **`PUT /api/v1/cart`**  
-   Synchronizes the local cart with the server.
+   Synchronizes the local cart with the server to maintain consistency.
 - **`POST /api/v1/cart/share`**  
-   Shares the user’s cart with others, allowing them to add items. Useful for group orders with item tracking and bill splitting.
-- **`POST /api/v1/cart/checkout`**  
-   Creates an order from the cart and places it in the waiting queue.
+   Shares the user’s cart with others, allowing them to add items. Ideal for group orders with item tracking and bill splitting.
+- **`POST /api/v1/cart/placeorder`**  
+   Converts the cart into an order and adds it to the waiting queue for processing.
 
 3. **Order Operations:**
 - **`GET /api/v1/myorder`**  
