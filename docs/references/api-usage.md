@@ -6,28 +6,34 @@ This document outlines the **User, Admin, and Office APIs** to facilitate menu, 
 ## **User API**
 
 1. **Menu Operations:**
-   - **`GET /api/v1/menu?category=string`**  
-     Retrieves a list of menu items filtered by category.
-   - **`GET /api/v1/menu/:id`**  
-     Retrieves details of a specific menu item by ID.
+- **`GET /api/v1/menu?category=string`**  
+  Retrieves a list of menu items filtered by category.
+- **`GET /api/v1/menu/:id`**  
+  Retrieves details of a specific menu item by ID.
 
-2. **Cart Operations:**
-   - **`POST /api/v1/cart/bill`**  
-     **Returns** the total price of the cart based on selected items; does **not create** a bill.
-   - **`POST /api/v1/cart/checkout`**  
-     **Creates an order** and queues it in the order list.
+### **2. Cart Operations**  
+- **`GET /api/v1/cart`**  
+   Retrieves or initializes the user’s cart.
+- **`POST /api/v1/cart/add`**  
+   Adds items to the user’s cart.
+- **`PUT /api/v1/cart`**  
+   Synchronizes the local cart with the server.
+- **`POST /api/v1/cart/share`**  
+   Shares the user’s cart with others, allowing them to add items. Useful for group orders with item tracking and bill splitting.
+- **`POST /api/v1/cart/checkout`**  
+   Creates an order from the cart and places it in the waiting queue.
 
 3. **Order Operations:**
-   - **`GET /api/v1/myorder`**  
-     Retrieves the list of the user’s orders.
-   - **`GET /api/v1/myorder/:id`**  
-     Retrieves the details and bill of a specific order.
-   - **`PATCH /api/v1/myorder/:id`**  
-     Modifies the order **only if it was rejected**.
+- **`GET /api/v1/myorder`**  
+  Retrieves the list of the user’s orders.
+- **`GET /api/v1/myorder/:id`**  
+  Retrieves the details and bill of a specific order.
+- **`PATCH /api/v1/myorder/:id`**  
+  Modifies the order **only if it was rejected**.
 
 4. **User Bill Operations:**
-   - **`POST /api/v1/myorder/bill`**  
-     Returns the **total bill amount** from all the user's created orders; does **not create** a new bill.
+- **`POST /api/v1/myorder/bill`**  
+  Returns the **total bill amount** from all the user's created orders; does **not create** a new bill.
 
 
 ## **Admin API**
