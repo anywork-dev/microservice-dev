@@ -34,7 +34,7 @@ This document outlines the **User, Admin, and Office APIs** to facilitate menu, 
   Modifies the order **only if it was rejected**.
 
 4. **User Bill Operations:**
-- **`POST /api/v1/myorder/bill`**  
+- **`GET /api/v1/myorder/bill`**  
   Returns the **total bill amount** from all the user's created orders; does **not create** a new bill.
 
 
