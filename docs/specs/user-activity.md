@@ -3,55 +3,35 @@
     const diagram = 
     `
     sequenceDiagram
-        actor Pelanggan
-        participant Aplikasi
-        actor Resepsionis
-        actor Dapur
+    actor Pemohon
+    actor Admin
+    actor Notaris
+    actor PPAT
 
-        Pelanggan->>Pelanggan: Scan QR code menu
-        alt jika perlu akses member
-            Pelanggan->>Aplikasi: Login
-        else akses umum
-            Pelanggan->>Aplikasi: Masukkan nama
-        end
-        loop membuat pesanan
-            Pelanggan->>Aplikasi: Akses menu
-            Pelanggan->>Pelanggan: Pilih menu
-            opt jika berbagi keranjang
-                Pelanggan->>Aplikasi: Meminta link keranjang
-                Aplikasi->>Pelanggan: Memberikan QR code keranjang
-                Pelanggan->>Aplikasi: Pelanggan lain memasukkan QR code
-            end
-            Pelanggan->>Aplikasi: Tambahkan ke keranjang
-            Pelanggan->>Aplikasi: Cek keranjang sebelum melanjutkan
-            alt jika bukan pemilik keranjang
-                Pelanggan-xAplikasi: Tidak bisa checkout keranjang
-            end
-            Pelanggan->>Aplikasi: Checkout keranjang
-            Aplikasi->>Resepsionis: Tambah ke antrian pesanan
-            Resepsionis->>Resepsionis: Cek antrian pesanan
-            Resepsionis->>Dapur: Cek pesanan
-            alt jika ditolak
-                Resepsionis->>Aplikasi: Batalkan pesanan disertai dengan catatan
-                Aplikasi->>Pelanggan: Pesan dibatalkan dengan catatan...
-            end
-            opt jika bayar di awal
-                Resepsionis->>Resepsionis: Menunggu pembayaran
-                Pelanggan->>Resepsionis: Bayar pesanan
-                Resepsionis->>Aplikasi: Mengubah status pembayaran
-            end
-            Resepsionis->>Aplikasi: Tambahkan pesanan ke antrian pelayanan
-            Aplikasi->>Pelanggan: Pesanan sedang dilayani
-            Dapur->>Resepsionis: Siapkan makanan
-            Resepsionis->>Aplikasi: Makanan siap
-            Resepsionis->>Pelanggan: Menyajikan makanan
-        end
-        alt jika bayar di akhir
-            Resepsionis->>Aplikasi: Cek total tagihan pelanggan
-            Pelanggan->>Resepsionis: Bayar pesanan
-            Resepsionis->>Pelanggan: Pembayaran diterima
-        end
-        Aplikasi->>Pelanggan: Pesanan selesai
+    Admin->>Admin: Membuat jenis pelayanan serta tugas-tugasnya dan jenis laporannya
+    Note right of Pemohon: Input field dibedakan oleh laporan pada jenis pelayanan (notaris / PPAT)
+    alt dibuatkan pemohon di mobile
+        Pemohon->>Admin: Isi Form Order Baru sesuai Jenis pelayanan
+        Pemohon->>Admin: Menyerahkan berkas permohonan (KTP)
+    else dibuatkan admin di dashboard
+        Admin->>Admin: Isi Form Order Baru sesuai jenis pelayanan
+        Admin->>Admin: Upload berkas pemohon sesuai jenis pelayanan
+    end
+    Admin->>Admin: Terima Berkas Pemohon
+    Admin->>Admin: Masukkan Permohonan ke Laporan
+    Admin->>Admin: Buat perincian aktivitas pelayanan
+    Admin->>Admin: Buat perincian tagihan
+    Admin->>Pemohon: Tanda terima berkas & Invoice
+    Pemohon->>Admin: Upload Bukti Pembayaran
+    Admin->>Admin: Verifikasi pembayaran
+    alt pembayaran ditolak
+        Admin->>Pemohon: Permintaan bukti pembayaran yang valid
+    end
+    alt pelayanan notaris
+        Admin->>Notaris: Tambah ke daftar kerja Notaris
+    else pelayanan ppat
+        Admin->>PPAT: Tambah ke daftar kerja PPAT
+    end
     `
 </script>
 
